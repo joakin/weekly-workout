@@ -366,6 +366,39 @@ function initializeWorkout(workout) {
 /** @type {number | null} */
 let currentSetStartTime = null;
 
+function bindActiveWorkoutEvents() {
+    const exerciseView = document.getElementById("exercise");
+    assertDefined(exerciseView, "exerciseView");
+
+    // Bind form submission
+    const form = exerciseView.querySelector(".set-completion-form");
+    assertDefined(form, "form");
+    if (form instanceof HTMLFormElement) {
+        form.addEventListener("submit", handleSetCompletion);
+    }
+
+    // Bind start button
+    const startButton = exerciseView.querySelector("#start-set");
+    assertDefined(startButton, "startButton");
+    if (startButton instanceof HTMLButtonElement) {
+        startButton.addEventListener("click", handleStartSet);
+    }
+
+    // Bind navigation buttons
+    const prevButton = exerciseView.querySelector(".prev-exercise");
+    const nextButton = exerciseView.querySelector(".next-exercise");
+    assertDefined(prevButton, "prevButton");
+    assertDefined(nextButton, "nextButton");
+
+    if (prevButton instanceof HTMLButtonElement) {
+        prevButton.addEventListener("click", () => navigateExercise(-1));
+    }
+
+    if (nextButton instanceof HTMLButtonElement) {
+        nextButton.addEventListener("click", () => navigateExercise(1));
+    }
+}
+
 function renderActiveWorkout() {
     if (!activeWorkout) return alert("No active workout");
 
@@ -598,44 +631,6 @@ function showExerciseView(workouts) {
     assertDefined(workoutPreview, "workoutPreview");
     workoutPreview.innerHTML = "";
     workoutPreview.appendChild(createWorkoutSection(workout));
-
-    // Add event listeners for start workout buttons
-    const startButtons = exerciseView.querySelectorAll(".start-workout-button");
-    startButtons.forEach((button) => {
-        if (button instanceof HTMLButtonElement) {
-            button.addEventListener("click", () => {
-                preWorkoutView.classList.add("hidden");
-                activeExerciseView.classList.remove("hidden");
-                initializeWorkout(workout);
-            });
-        }
-    });
-
-    // Add event listeners
-    const form = exerciseView.querySelector(".set-completion-form");
-    assertDefined(form, "form");
-    if (form instanceof HTMLFormElement) {
-        form.addEventListener("submit", handleSetCompletion);
-    }
-
-    const startButton = exerciseView.querySelector("#start-set");
-    assertDefined(startButton, "startButton");
-    if (startButton instanceof HTMLButtonElement) {
-        startButton.addEventListener("click", handleStartSet);
-    }
-
-    const prevButton = exerciseView.querySelector(".prev-exercise");
-    assertDefined(prevButton, "prevButton");
-    const nextButton = exerciseView.querySelector(".next-exercise");
-    assertDefined(nextButton, "nextButton");
-
-    if (prevButton instanceof HTMLButtonElement) {
-        prevButton.addEventListener("click", () => navigateExercise(-1));
-    }
-
-    if (nextButton instanceof HTMLButtonElement) {
-        nextButton.addEventListener("click", () => navigateExercise(1));
-    }
 }
 
 // Event listeners setup
@@ -661,6 +656,70 @@ function setupEventListeners() {
         const hash = window.location.hash.substring(1) || DEFAULT_VIEW;
         showView(hash);
     });
+
+    // Bind exercise view event listeners
+    const exerciseView = document.getElementById("exercise");
+    assertDefined(exerciseView, "exerciseView");
+
+    // Bind start workout buttons
+    const startButtons = exerciseView.querySelectorAll(".start-workout-button");
+    startButtons.forEach((button) => {
+        if (button instanceof HTMLButtonElement) {
+            button.addEventListener("click", () => {
+                const preWorkoutView =
+                    exerciseView.querySelector(".pre-workout-view");
+                const activeExerciseView = exerciseView.querySelector(
+                    ".exercise-container"
+                );
+                assertDefined(preWorkoutView, "preWorkoutView");
+                assertDefined(activeExerciseView, "activeExerciseView");
+
+                preWorkoutView.classList.add("hidden");
+                activeExerciseView.classList.remove("hidden");
+
+                // Get current workout
+                const dayOfWeek = new Date().toLocaleDateString("en-US", {
+                    weekday: "long",
+                });
+                const lowerDayOfWeek = /** @type {keyof WeeklyPlan} */ (
+                    dayOfWeek.toLowerCase()
+                );
+                assertDefined(workoutsCache, "workoutsCache");
+                const workout = workoutsCache.find(
+                    (w) => w.name === weeklyPlan[lowerDayOfWeek]
+                );
+                assertDefined(workout, "workout");
+
+                initializeWorkout(workout);
+            });
+        }
+    });
+
+    // Bind active workout form and navigation
+    const form = exerciseView.querySelector(".set-completion-form");
+    assertDefined(form, "form");
+    if (form instanceof HTMLFormElement) {
+        form.addEventListener("submit", handleSetCompletion);
+    }
+
+    const startButton = exerciseView.querySelector("#start-set");
+    assertDefined(startButton, "startButton");
+    if (startButton instanceof HTMLButtonElement) {
+        startButton.addEventListener("click", handleStartSet);
+    }
+
+    const prevButton = exerciseView.querySelector(".prev-exercise");
+    const nextButton = exerciseView.querySelector(".next-exercise");
+    assertDefined(prevButton, "prevButton");
+    assertDefined(nextButton, "nextButton");
+
+    if (prevButton instanceof HTMLButtonElement) {
+        prevButton.addEventListener("click", () => navigateExercise(-1));
+    }
+
+    if (nextButton instanceof HTMLButtonElement) {
+        nextButton.addEventListener("click", () => navigateExercise(1));
+    }
 }
 
 // Fetch workouts data
