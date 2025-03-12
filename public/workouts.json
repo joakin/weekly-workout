@@ -1,0 +1,212 @@
+{
+    "workouts": [
+        {
+            "name": "Push 1",
+            "exercises": [
+                {
+                    "name": "Barbell Bench Press",
+                    "sets": "4",
+                    "reps": "4-6",
+                    "notes": "leave 1-2 reps in the tank"
+                },
+                {
+                    "name": "Hi-to-Low Crossovers",
+                    "sets": "3",
+                    "reps": "10-12"
+                },
+                {
+                    "name": "DB Shoulder Press",
+                    "sets": "4",
+                    "reps": "8-10"
+                },
+                {
+                    "name": "1 1/2 Side Lateral Raises",
+                    "sets": "3",
+                    "reps": "12-15"
+                },
+                {
+                    "name": "Lying Tricep Extensions",
+                    "sets": "3",
+                    "reps": "10-12",
+                    "superset": {
+                        "name": "DB Waiter's Curls",
+                        "sets": "3",
+                        "reps": "10-12"
+                    }
+                },
+                {
+                    "name": "Rotator Cuff External Rotation",
+                    "sets": "3",
+                    "reps": "15-20"
+                }
+            ]
+        },
+        {
+            "name": "Pull 1",
+            "exercises": [
+                {
+                    "name": "Barbell Deadlifts",
+                    "sets": "1",
+                    "reps": "5",
+                    "notes": "using 80% of 1RM, perform 4 warmup/ramp-up sets"
+                },
+                {
+                    "name": "Chest Supported Rows",
+                    "sets": "3",
+                    "reps": "8-10"
+                },
+                {
+                    "name": "DB Lat Pullovers",
+                    "sets": "2-3",
+                    "reps": "10-12"
+                },
+                {
+                    "name": "DB High Pulls",
+                    "sets": "3",
+                    "reps": "10-12"
+                },
+                {
+                    "name": "Biceps Chin Curls",
+                    "sets": "3",
+                    "reps": "F",
+                    "superset": {
+                        "name": "Overhead Triceps Extensions",
+                        "sets": "3",
+                        "reps": "10-12"
+                    }
+                },
+                {
+                    "name": "Angels and Devils",
+                    "sets": "3",
+                    "reps": "15-20"
+                }
+            ]
+        },
+        {
+            "name": "Legs",
+            "exercises": [
+                {
+                    "name": "Barbell Squats",
+                    "sets": "4",
+                    "reps": "4-6",
+                    "notes": "leave 1-2 reps in the tank - increase weight as able"
+                },
+                {
+                    "name": "Barbell Hip Thrusts",
+                    "sets": "3",
+                    "reps": "8-10"
+                },
+                {
+                    "name": "Barbell or DB Alternating Reverse Lunges",
+                    "sets": "2-3",
+                    "reps": "10-12 each leg"
+                },
+                {
+                    "name": "DB Single Leg RDL's",
+                    "sets": "2-3",
+                    "reps": "10-12 each leg",
+                    "superset": {
+                        "name": "Slick Floor Bridge Curls",
+                        "sets": "2-3",
+                        "reps": "F"
+                    }
+                },
+                {
+                    "name": "Standing DB Calf Raises",
+                    "sets": "3",
+                    "reps": "15-20",
+                    "superset": {
+                        "name": "Seated DB Calf Raises",
+                        "sets": "3",
+                        "reps": "15-20",
+                        "notes": "perform one leg at a time if time allows"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Push 2",
+            "exercises": [
+                {
+                    "name": "Barbell OHP",
+                    "sets": "4",
+                    "reps": "4-6",
+                    "notes": "leave 1-2 reps in the tank"
+                },
+                {
+                    "name": "Underhand DB Bench Press",
+                    "sets": "3",
+                    "reps": "8-10"
+                },
+                {
+                    "name": "DB Abduction Rows",
+                    "sets": "3",
+                    "reps": "8-10 each arm"
+                },
+                {
+                    "name": "DB Floor Flys",
+                    "sets": "3",
+                    "reps": "10-12"
+                },
+                {
+                    "name": "Close Grip Bench Press",
+                    "sets": "3",
+                    "reps": "6-8",
+                    "superset": {
+                        "name": "DB Curl of Choice",
+                        "sets": "3",
+                        "reps": "10-12"
+                    }
+                },
+                {
+                    "name": "Pushup Plus",
+                    "sets": "3",
+                    "reps": "F"
+                }
+            ]
+        },
+        {
+            "name": "Pull 2",
+            "exercises": [
+                {
+                    "name": "Snatch Grip Deadlifts",
+                    "sets": "3",
+                    "reps": "5",
+                    "notes": "using weight you can do for 8 reps"
+                },
+                {
+                    "name": "Weighted Pullups",
+                    "sets": "3",
+                    "reps": "6-8",
+                    "notes": "switch with #1 if grip is compromised here"
+                },
+                {
+                    "name": "Alt. DB Gorilla Rows",
+                    "sets": "3",
+                    "reps": "10-12 each arm"
+                },
+                {
+                    "name": "Straight Arm Pushdowns",
+                    "sets": "2-3",
+                    "reps": "12-15"
+                },
+                {
+                    "name": "Barbell / EZ Curls",
+                    "sets": "3",
+                    "reps": "6-8",
+                    "superset": {
+                        "name": "Triceps Pushdowns",
+                        "sets": "3",
+                        "reps": "10-12"
+                    }
+                },
+                {
+                    "name": "Face Pulls",
+                    "sets": "3",
+                    "reps": "15-20",
+                    "notes": "shown with optional trap raise"
+                }
+            ]
+        }
+    ]
+} 
