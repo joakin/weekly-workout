@@ -398,8 +398,10 @@ function renderActiveWorkout() {
         currentExercise.exercise.reps
     )} reps`;
 
-    const notes = exerciseView.querySelector(".exercise-notes");
+    const notes = exerciseView.querySelector(".active-exercise-notes");
     assertDefined(notes, "notes");
+    if (!(notes instanceof HTMLElement)) return;
+
     if (currentExercise.exercise.notes) {
         notes.innerHTML = `ℹ <span>${currentExercise.exercise.notes}</span>`;
         notes.classList.remove("hidden");
