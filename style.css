@@ -380,17 +380,16 @@ nav {
     background: var(--section-bg);
     border-radius: var(--spacing-sm);
     box-shadow: var(--shadow-sm);
+    text-align: center;
 }
 
 #exercise .today-header h2 {
-    font-size: var(--font-size-xl);
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-sm);
 }
 
 #exercise .today-workout-info {
-    display: flex;
-    align-items: center;
+    font-weight: 500;
 }
 
 #exercise .today-workout-info p {
