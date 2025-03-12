@@ -619,6 +619,18 @@ nav {
     border-radius: var(--spacing-sm);
 }
 
+.set-completion-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.set-completion-form label {
+    font-size: var(--font-size-sm);
+    color: var(--text-color);
+    font-weight: 500;
+}
+
 .set-completion-form input {
     padding: var(--spacing-sm);
     border: 1px solid var(--border-color);
