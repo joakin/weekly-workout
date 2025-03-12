@@ -373,4 +373,186 @@ nav {
     display: none;
 }
 
-/* Workout sections */ 
+/* Exercise View */
+#exercise .today-header {
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md);
+    background: var(--section-bg);
+    border-radius: var(--spacing-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+#exercise .today-header h2 {
+    font-size: var(--font-size-xl);
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+#exercise .today-workout-info {
+    display: flex;
+    align-items: center;
+}
+
+#exercise .today-workout-info p {
+    color: var(--primary-color);
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+}
+
+#exercise .exercise-container {
+    background: var(--section-bg);
+    border-radius: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    margin-top: var(--spacing-xl);
+}
+
+/* Weekly Plan View */
+#weekly-plan .days-grid {
+    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+}
+
+#weekly-plan .day-card {
+    background: var(--section-bg);
+    border-radius: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#weekly-plan .day-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+#weekly-plan .day-card.rest {
+    background-color: var(--section-bg-alt);
+}
+
+#weekly-plan .day-card h2 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-sm);
+    color: var(--primary-color);
+}
+
+#weekly-plan .day-card p {
+    color: var(--text-color);
+}
+
+#weekly-plan .day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+#weekly-plan .day-title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+#weekly-plan .day-title h2 {
+    font-size: var(--font-size-xl);
+    color: var(--primary-color);
+    margin: 0;
+}
+
+#weekly-plan .day-title p {
+    color: var(--text-color);
+    font-size: var(--font-size-base);
+    opacity: 0.8;
+}
+
+/* Workouts View */
+#workouts .workouts-grid {
+    gap: var(--spacing-xl);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+}
+
+/* Shared workout section styles (used in both workouts and exercise views) */
+.workout-section {
+    background: var(--section-bg);
+    border-radius: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.workout-section h2 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-md);
+    color: var(--primary-color);
+}
+
+.exercise-list {
+    list-style: none;
+}
+
+.exercise-item {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.exercise-item:last-child {
+    border-bottom: none;
+}
+
+.exercise-name {
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.exercise-sets {
+    font-size: var(--font-size-sm);
+    color: var(--text-light);
+    margin-bottom: var(--spacing-sm);
+}
+
+.exercise-notes {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    margin-top: var(--spacing-xs);
+    padding-left: var(--spacing-sm);
+}
+
+.exercise-notes span {
+    font-style: italic;
+}
+
+/* Superset styles */
+.exercise-item.superset {
+    margin-left: var(--spacing-md);
+    margin-top: var(--spacing-sm);
+    padding-left: var(--spacing-md);
+    border-left: 2px solid var(--primary-color);
+    position: relative;
+}
+
+.exercise-item.superset::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: calc(-1 * var(--spacing-sm));
+    width: 2px;
+    height: calc(100% + var(--spacing-md));
+    background: var(--primary-color);
+    opacity: 0.3;
+}
+
+/* Mobile Styles */
+@media (max-width: 640px) {
+    /* ... existing mobile styles ... */
+
+    #weekly-plan .days-grid {
+        gap: var(--spacing-sm);
+    }
+
+    .workout-section,
+    #weekly-plan .day-card {
+        padding: var(--spacing-md);
+    }
+} 
