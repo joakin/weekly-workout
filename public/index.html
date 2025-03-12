@@ -19,11 +19,27 @@
             <ul id="nav-menu" role="menubar">
                 <li role="none"><a href="#/weekly-plan" class="nav-link" role="menuitem">Weekly Plan</a></li>
                 <li role="none"><a href="#/workouts" class="nav-link" role="menuitem">Workouts</a></li>
+                <li role="none"><a href="#/exercise" class="nav-link" role="menuitem">Exercise</a></li>
             </ul>
         </nav>
     </header>
     
     <main>
+        <div id="exercise" class="view" aria-live="polite">
+            <div class="today-header">
+                <h2></h2>
+                <div class="today-workout-info">
+                    <p class="workout-name"></p>
+                </div>
+            </div>
+            <div class="exercise-container">
+                <!-- Exercise content will be rendered here -->
+            </div>
+            <div class="error-state hidden">
+                <p>No workout scheduled for today.</p>
+            </div>
+        </div>
+
         <div id="workouts" class="view" aria-live="polite">
             <div class="workouts-grid">
                 <!-- Workouts will be rendered here -->

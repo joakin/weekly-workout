@@ -5,39 +5,39 @@
             "exercises": [
                 {
                     "name": "Barbell Bench Press",
-                    "sets": "4",
-                    "reps": "4-6",
+                    "sets": { "min": 4 },
+                    "reps": { "min": 4, "max": 6 },
                     "notes": "leave 1-2 reps in the tank"
                 },
                 {
                     "name": "Hi-to-Low Crossovers",
-                    "sets": "3",
-                    "reps": "10-12"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 10, "max": 12 }
                 },
                 {
                     "name": "DB Shoulder Press",
-                    "sets": "4",
-                    "reps": "8-10"
+                    "sets": { "min": 4 },
+                    "reps": { "min": 8, "max": 10 }
                 },
                 {
                     "name": "1 1/2 Side Lateral Raises",
-                    "sets": "3",
-                    "reps": "12-15"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 12, "max": 15 }
                 },
                 {
                     "name": "Lying Tricep Extensions",
-                    "sets": "3",
-                    "reps": "10-12",
+                    "sets": { "min": 3 },
+                    "reps": { "min": 10, "max": 12 },
                     "superset": {
                         "name": "DB Waiter's Curls",
-                        "sets": "3",
-                        "reps": "10-12"
+                        "sets": { "min": 3 },
+                        "reps": { "min": 10, "max": 12 }
                     }
                 },
                 {
                     "name": "Rotator Cuff External Rotation",
-                    "sets": "3",
-                    "reps": "15-20"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 15, "max": 20 }
                 }
             ]
         },
@@ -46,39 +46,40 @@
             "exercises": [
                 {
                     "name": "Barbell Deadlifts",
-                    "sets": "1",
-                    "reps": "5",
+                    "sets": { "min": 1 },
+                    "reps": { "min": 5 },
                     "notes": "using 80% of 1RM, perform 4 warmup/ramp-up sets"
                 },
                 {
                     "name": "Chest Supported Rows",
-                    "sets": "3",
-                    "reps": "8-10"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 8, "max": 10 }
                 },
                 {
                     "name": "DB Lat Pullovers",
-                    "sets": "2-3",
-                    "reps": "10-12"
+                    "sets": { "min": 2, "max": 3 },
+                    "reps": { "min": 10, "max": 12 }
                 },
                 {
                     "name": "DB High Pulls",
-                    "sets": "3",
-                    "reps": "10-12"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 10, "max": 12 }
                 },
                 {
                     "name": "Biceps Chin Curls",
-                    "sets": "3",
-                    "reps": "F",
+                    "sets": { "min": 3 },
+                    "reps": { "min": 0 },
+                    "notes": "To failure",
                     "superset": {
                         "name": "Overhead Triceps Extensions",
-                        "sets": "3",
-                        "reps": "10-12"
+                        "sets": { "min": 3 },
+                        "reps": { "min": 10, "max": 12 }
                     }
                 },
                 {
                     "name": "Angels and Devils",
-                    "sets": "3",
-                    "reps": "15-20"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 15, "max": 20 }
                 }
             ]
         },
@@ -87,38 +88,41 @@
             "exercises": [
                 {
                     "name": "Barbell Squats",
-                    "sets": "4",
-                    "reps": "4-6",
+                    "sets": { "min": 4 },
+                    "reps": { "min": 4, "max": 6 },
                     "notes": "leave 1-2 reps in the tank - increase weight as able"
                 },
                 {
                     "name": "Barbell Hip Thrusts",
-                    "sets": "3",
-                    "reps": "8-10"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 8, "max": 10 }
                 },
                 {
                     "name": "Barbell or DB Alternating Reverse Lunges",
-                    "sets": "2-3",
-                    "reps": "10-12 each leg"
+                    "sets": { "min": 2, "max": 3 },
+                    "reps": { "min": 10, "max": 12 },
+                    "notes": "each leg"
                 },
                 {
                     "name": "DB Single Leg RDL's",
-                    "sets": "2-3",
-                    "reps": "10-12 each leg",
+                    "sets": { "min": 2, "max": 3 },
+                    "reps": { "min": 10, "max": 12 },
+                    "notes": "each leg",
                     "superset": {
                         "name": "Slick Floor Bridge Curls",
-                        "sets": "2-3",
-                        "reps": "F"
+                        "sets": { "min": 2, "max": 3 },
+                        "reps": { "min": 0 },
+                        "notes": "To failure"
                     }
                 },
                 {
                     "name": "Standing DB Calf Raises",
-                    "sets": "3",
-                    "reps": "15-20",
+                    "sets": { "min": 3 },
+                    "reps": { "min": 15, "max": 20 },
                     "superset": {
                         "name": "Seated DB Calf Raises",
-                        "sets": "3",
-                        "reps": "15-20",
+                        "sets": { "min": 3 },
+                        "reps": { "min": 15, "max": 20 },
                         "notes": "perform one leg at a time if time allows"
                     }
                 }
@@ -129,39 +133,41 @@
             "exercises": [
                 {
                     "name": "Barbell OHP",
-                    "sets": "4",
-                    "reps": "4-6",
+                    "sets": { "min": 4 },
+                    "reps": { "min": 4, "max": 6 },
                     "notes": "leave 1-2 reps in the tank"
                 },
                 {
                     "name": "Underhand DB Bench Press",
-                    "sets": "3",
-                    "reps": "8-10"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 8, "max": 10 }
                 },
                 {
                     "name": "DB Abduction Rows",
-                    "sets": "3",
-                    "reps": "8-10 each arm"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 8, "max": 10 },
+                    "notes": "each arm"
                 },
                 {
                     "name": "DB Floor Flys",
-                    "sets": "3",
-                    "reps": "10-12"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 10, "max": 12 }
                 },
                 {
                     "name": "Close Grip Bench Press",
-                    "sets": "3",
-                    "reps": "6-8",
+                    "sets": { "min": 3 },
+                    "reps": { "min": 6, "max": 8 },
                     "superset": {
                         "name": "DB Curl of Choice",
-                        "sets": "3",
-                        "reps": "10-12"
+                        "sets": { "min": 3 },
+                        "reps": { "min": 10, "max": 12 }
                     }
                 },
                 {
                     "name": "Pushup Plus",
-                    "sets": "3",
-                    "reps": "F"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 0 },
+                    "notes": "To failure"
                 }
             ]
         },
@@ -170,40 +176,41 @@
             "exercises": [
                 {
                     "name": "Snatch Grip Deadlifts",
-                    "sets": "3",
-                    "reps": "5",
+                    "sets": { "min": 3 },
+                    "reps": { "min": 5 },
                     "notes": "using weight you can do for 8 reps"
                 },
                 {
                     "name": "Weighted Pullups",
-                    "sets": "3",
-                    "reps": "6-8",
+                    "sets": { "min": 3 },
+                    "reps": { "min": 6, "max": 8 },
                     "notes": "switch with #1 if grip is compromised here"
                 },
                 {
                     "name": "Alt. DB Gorilla Rows",
-                    "sets": "3",
-                    "reps": "10-12 each arm"
+                    "sets": { "min": 3 },
+                    "reps": { "min": 10, "max": 12 },
+                    "notes": "each arm"
                 },
                 {
                     "name": "Straight Arm Pushdowns",
-                    "sets": "2-3",
-                    "reps": "12-15"
+                    "sets": { "min": 2, "max": 3 },
+                    "reps": { "min": 12, "max": 15 }
                 },
                 {
                     "name": "Barbell / EZ Curls",
-                    "sets": "3",
-                    "reps": "6-8",
+                    "sets": { "min": 3 },
+                    "reps": { "min": 6, "max": 8 },
                     "superset": {
                         "name": "Triceps Pushdowns",
-                        "sets": "3",
-                        "reps": "10-12"
+                        "sets": { "min": 3 },
+                        "reps": { "min": 10, "max": 12 }
                     }
                 },
                 {
                     "name": "Face Pulls",
-                    "sets": "3",
-                    "reps": "15-20",
+                    "sets": { "min": 3 },
+                    "reps": { "min": 15, "max": 20 },
                     "notes": "shown with optional trap raise"
                 }
             ]
