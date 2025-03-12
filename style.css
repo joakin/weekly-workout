@@ -372,7 +372,7 @@ nav {
 
 /* Utility classes */
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 /* Exercise View */
@@ -514,9 +514,9 @@ nav {
 }
 
 .exercise-notes {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
-    margin-top: var(--spacing-xs);
+    margin-top: var(--spacing-md);
     padding-left: var(--spacing-sm);
 }
 
@@ -750,4 +750,33 @@ nav {
 
 #start-set:disabled, #complete-set:disabled {
     background-color: var(--disabled-color);
-} 
+}
+
+.pre-workout-view {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.start-workout-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.start-workout-button:hover {
+    background-color: var(--primary-dark);
+}
+
+.workout-preview {
+    border-radius: 0.5rem;
+    background-color: var(--surface-color);
+    padding: 1rem;
+}

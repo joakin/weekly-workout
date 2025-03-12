@@ -400,13 +400,30 @@ function renderActiveWorkout() {
 
     const notes = exerciseView.querySelector(".exercise-notes");
     assertDefined(notes, "notes");
-    notes.textContent = currentExercise.exercise.notes || "";
+    if (currentExercise.exercise.notes) {
+        notes.innerHTML = `ℹ <span>${currentExercise.exercise.notes}</span>`;
+        notes.classList.remove("hidden");
+    } else {
+        notes.classList.add("hidden");
+    }
 
     // Reset form and buttons
     const form = exerciseView.querySelector(".set-completion-form");
     assertDefined(form, "form");
     if (!(form instanceof HTMLFormElement)) return;
+
+    // Store the current weight before resetting
+    const weightInput = form.querySelector("#weight-used");
+    assertDefined(weightInput, "weightInput");
+    const currentWeight =
+        weightInput instanceof HTMLInputElement ? weightInput.value : "";
+
     form.reset();
+
+    // Restore the weight value after reset
+    if (weightInput instanceof HTMLInputElement) {
+        weightInput.value = currentWeight;
+    }
 
     const repsInput = form.querySelector("#reps-completed");
     assertDefined(repsInput, "repsInput");
@@ -561,11 +578,36 @@ function showExerciseView(workouts) {
 
     const errorState = exerciseView.querySelector(".error-state");
     assertDefined(errorState, "errorState");
-    if (errorState) {
-        errorState.classList.add("hidden");
-    }
+    errorState.classList.add("hidden");
 
-    initializeWorkout(workout);
+    // Show pre-workout view with workout details
+    const preWorkoutView = exerciseView.querySelector(".pre-workout-view");
+    const activeExerciseView = exerciseView.querySelector(
+        ".exercise-container"
+    );
+    assertDefined(preWorkoutView, "preWorkoutView");
+    assertDefined(activeExerciseView, "activeExerciseView");
+
+    preWorkoutView.classList.remove("hidden");
+    activeExerciseView.classList.add("hidden");
+
+    // Populate workout preview
+    const workoutPreview = preWorkoutView.querySelector(".workout-preview");
+    assertDefined(workoutPreview, "workoutPreview");
+    workoutPreview.innerHTML = "";
+    workoutPreview.appendChild(createWorkoutSection(workout));
+
+    // Add event listeners for start workout buttons
+    const startButtons = exerciseView.querySelectorAll(".start-workout-button");
+    startButtons.forEach((button) => {
+        if (button instanceof HTMLButtonElement) {
+            button.addEventListener("click", () => {
+                preWorkoutView.classList.add("hidden");
+                activeExerciseView.classList.remove("hidden");
+                initializeWorkout(workout);
+            });
+        }
+    });
 
     // Add event listeners
     const form = exerciseView.querySelector(".set-completion-form");
