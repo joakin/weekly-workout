@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Weekly Workout - A workout routine planner">
+    <meta name="theme-color" content="#2563eb">
+    <title>Weekly Workout</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💪</text></svg>">
+</head>
+<body>
+    <header>
+        <h1>Weekly Workout</h1>
+        <nav aria-label="Main navigation">
+            <button id="menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">
+                <span class="menu-icon"></span>
+            </button>
+            <ul id="nav-menu" role="menubar">
+                <li role="none"><a href="#/weekly-plan" class="nav-link" role="menuitem">Weekly Plan</a></li>
+                <li role="none"><a href="#/workouts" class="nav-link" role="menuitem">Workouts</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <div id="workouts" class="view" aria-live="polite">
+            <div class="workouts-grid">
+                <!-- Workouts will be rendered here -->
+            </div>
+            <div class="error-state hidden">
+                <p>Failed to load workouts. Please try refreshing the page.</p>
+            </div>
+        </div>
+        
+        <div id="weekly-plan" class="view">
+            <div class="days-grid" data-default-display="grid">
+                <template id="day-card-template">
+                    <div class="day-card" data-day="">
+                        <h2></h2>
+                        <p></p>
+                    </div>
+                </template>
+            </div>
+            <div id="day-workout" class="hidden">
+                <div class="day-header">
+                    <div class="day-title">
+                        <h2></h2>
+                        <p></p>
+                    </div>
+                    <button class="back-button" aria-label="Back to weekly plan">← Back to Week</button>
+                </div>
+                <div class="workout-container" aria-live="polite">
+                    <!-- Selected day workout will be rendered here -->
+                </div>
+                <div class="error-state hidden">
+                    <p>Failed to load workout. Please try again.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script type="module" src="index.js"></script>
+</body>
+</html> 
