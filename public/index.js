@@ -18,6 +18,29 @@
  */
 
 /**
+ * @typedef {Object} PerformedSet
+ * @property {number} reps
+ * @property {number} weight
+ * @property {number} startTime
+ * @property {number} endTime
+ */
+
+/**
+ * @typedef {Object} ExerciseProgress
+ * @property {Exercise} exercise
+ * @property {PerformedSet[]} completedSets
+ */
+
+/**
+ * @typedef {Object} WorkoutProgress
+ * @property {number} startTime
+ * @property {number} endTime
+ * @property {Workout} workout
+ * @property {ExerciseProgress[]} exercises
+ * @property {number} currentExerciseIndex
+ */
+
+/**
  * @typedef {Object} Workout
  * @property {string} name
  * @property {Exercise[]} exercises
@@ -70,6 +93,9 @@ const ROUTES = {
 // Cache
 /** @type {Workout[] | null} */
 let workoutsCache = null;
+
+/** @type {WorkoutProgress | null} */
+let activeWorkout = null;
 
 /** @type {WeeklyPlan} */
 const weeklyPlan = {
@@ -172,7 +198,7 @@ const utils = {
 // Navigation handling
 /** @type {(path: string) => void} */
 function showView(path) {
-    assertDefined(workoutsCache);
+    assertDefined(workoutsCache, "workoutsCache");
 
     // Remove leading slash if present
     path = path.startsWith("/") ? path.substring(1) : path;
@@ -320,49 +346,251 @@ function populateWeeklyView() {
     });
 }
 
-/** @type {(workouts: Workout[]) => void} */
-function showExerciseView(workouts) {
-    const now = new Date();
-    const dayOfWeek = now.toLocaleDateString("en-US", { weekday: "long" });
+/**
+ * @param {Workout} workout
+ */
+function initializeWorkout(workout) {
+    activeWorkout = {
+        startTime: Date.now(),
+        endTime: 0, // Will be set when workout is completed
+        workout: workout,
+        exercises: workout.exercises.map((exercise) => ({
+            exercise,
+            completedSets: [],
+        })),
+        currentExerciseIndex: 0,
+    };
+    renderActiveWorkout();
+}
 
-    // Type guard to ensure dayOfWeek is a valid day
-    const lowerDayOfWeek = dayOfWeek.toLowerCase();
-    if (!isValidDay(lowerDayOfWeek)) {
-        console.error(`Invalid day of week: ${lowerDayOfWeek}`);
-        return;
+/** @type {number | null} */
+let currentSetStartTime = null;
+
+function renderActiveWorkout() {
+    if (!activeWorkout) return alert("No active workout");
+
+    const currentExercise =
+        activeWorkout.exercises[activeWorkout.currentExerciseIndex];
+    if (!currentExercise)
+        return alert(
+            `Invalid index ${activeWorkout.currentExerciseIndex}. ${activeWorkout.exercises.length} exercises available`
+        );
+
+    const exerciseView = document.getElementById("exercise");
+    assertDefined(exerciseView, "exerciseView");
+
+    // Update exercise title and progress
+    const title = exerciseView.querySelector(".active-exercise-title");
+    assertDefined(title, "title");
+    title.textContent = currentExercise.exercise.name;
+
+    const progress = exerciseView.querySelector(".exercise-progress");
+    assertDefined(progress, "progress");
+    const setRange = formatRange(currentExercise.exercise.sets);
+    progress.textContent = `Set ${
+        currentExercise.completedSets.length + 1
+    } of ${setRange}`;
+
+    // Update exercise info
+    const targetReps = exerciseView.querySelector(".target-reps");
+    assertDefined(targetReps, "targetReps");
+    targetReps.textContent = `Target: ${formatRange(
+        currentExercise.exercise.reps
+    )} reps`;
+
+    const notes = exerciseView.querySelector(".exercise-notes");
+    assertDefined(notes, "notes");
+    notes.textContent = currentExercise.exercise.notes || "";
+
+    // Reset form and buttons
+    const form = exerciseView.querySelector(".set-completion-form");
+    assertDefined(form, "form");
+    if (!(form instanceof HTMLFormElement)) return;
+    form.reset();
+
+    const repsInput = form.querySelector("#reps-completed");
+    assertDefined(repsInput, "repsInput");
+    if (repsInput instanceof HTMLInputElement) {
+        repsInput.value = currentExercise.exercise.reps.min.toString();
     }
 
-    const workoutName = weeklyPlan[lowerDayOfWeek];
-    const workout = workouts.find((w) => w.name === workoutName);
-
-    const exerciseView = document.getElementById(VIEWS.EXERCISE);
-    if (!exerciseView) return;
-
-    const headerTitle = exerciseView.querySelector(".today-header h2");
-    const workoutNameElement = exerciseView.querySelector(".workout-name");
-    const exerciseContainer = exerciseView.querySelector(".exercise-container");
-    const errorState = exerciseView.querySelector(".error-state");
-
+    const startButton = form.querySelector("#start-set");
+    const completeButton = form.querySelector("#complete-set");
+    assertDefined(startButton, "startButton");
+    assertDefined(completeButton, "completeButton");
     if (
-        !headerTitle ||
-        !workoutNameElement ||
-        !exerciseContainer ||
-        !errorState
+        !(startButton instanceof HTMLButtonElement) ||
+        !(completeButton instanceof HTMLButtonElement)
     )
         return;
 
+    startButton.disabled = false;
+    completeButton.disabled = true;
+
+    // Update completed sets
+    const setsList = exerciseView.querySelector(".sets-list");
+    assertDefined(setsList, "setsList");
+    setsList.innerHTML = "";
+
+    currentExercise.completedSets.forEach((set, index) => {
+        const li = document.createElement("li");
+        li.className = "set-item";
+        const duration = ((set.endTime - set.startTime) / 1000).toFixed(1);
+        li.textContent = `Set ${index + 1}: ${set.reps} reps @ ${
+            set.weight
+        }kg (${duration}s)`;
+        setsList.appendChild(li);
+    });
+
+    // Update navigation buttons
+    const prevButton = exerciseView.querySelector(".prev-exercise");
+    assertDefined(prevButton, "prevButton");
+    const nextButton = exerciseView.querySelector(".next-exercise");
+    assertDefined(nextButton, "nextButton");
+
+    if (prevButton instanceof HTMLButtonElement) {
+        prevButton.disabled = activeWorkout.currentExerciseIndex === 0;
+    }
+
+    if (nextButton instanceof HTMLButtonElement) {
+        nextButton.disabled =
+            activeWorkout.currentExerciseIndex ===
+            activeWorkout.exercises.length - 1;
+    }
+}
+
+function handleStartSet() {
+    const exerciseView = document.getElementById("exercise");
+    assertDefined(exerciseView, "exerciseView");
+
+    const startButton = exerciseView.querySelector("#start-set");
+    const completeButton = exerciseView.querySelector("#complete-set");
+    assertDefined(startButton, "startButton");
+    assertDefined(completeButton, "completeButton");
+    if (
+        !(startButton instanceof HTMLButtonElement) ||
+        !(completeButton instanceof HTMLButtonElement)
+    )
+        return;
+
+    currentSetStartTime = Date.now();
+    startButton.disabled = true;
+    completeButton.disabled = false;
+}
+
+/**
+ * @param {SubmitEvent} event
+ */
+function handleSetCompletion(event) {
+    event.preventDefault();
+
+    assertDefined(activeWorkout, "activeWorkout");
+    assertDefined(currentSetStartTime, "currentSetStartTime");
+
+    const currentExercise =
+        activeWorkout.exercises[activeWorkout.currentExerciseIndex];
+    assertDefined(currentExercise, "currentExercise");
+
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) return;
+
+    const repsInput = form.querySelector("#reps-completed");
+    assertDefined(repsInput, "repsInput");
+    if (!(repsInput instanceof HTMLInputElement)) return;
+
+    const weightInput = form.querySelector("#weight-used");
+    assertDefined(weightInput, "weightInput");
+    if (!(weightInput instanceof HTMLInputElement)) return;
+
+    const reps = parseInt(repsInput.value);
+    const weight = parseFloat(weightInput.value);
+    const endTime = Date.now();
+
+    currentExercise.completedSets.push({
+        reps,
+        weight,
+        startTime: currentSetStartTime,
+        endTime,
+    });
+
+    currentSetStartTime = null;
+    renderActiveWorkout();
+}
+
+/**
+ * @param {number} direction
+ */
+function navigateExercise(direction) {
+    if (!activeWorkout) return;
+    const newIndex = activeWorkout.currentExerciseIndex + direction;
+    if (newIndex >= 0 && newIndex < activeWorkout.exercises.length) {
+        activeWorkout.currentExerciseIndex = newIndex;
+        renderActiveWorkout();
+    }
+}
+
+/**
+ * @param {Workout[]} workouts
+ */
+function showExerciseView(workouts) {
+    const dayOfWeek = new Date().toLocaleDateString("en-US", {
+        weekday: "long",
+    });
+    const lowerDayOfWeek = /** @type {keyof WeeklyPlan} */ (
+        dayOfWeek.toLowerCase()
+    );
+
+    const workout = workouts.find((w) => w.name === weeklyPlan[lowerDayOfWeek]);
+    if (!workout) {
+        const errorState = document.querySelector(".error-state");
+        assertDefined(errorState, "errorState");
+        errorState.classList.remove("hidden");
+        return;
+    }
+
+    const exerciseView = document.getElementById("exercise");
+    assertDefined(exerciseView, "exerciseView");
+
+    const headerTitle = exerciseView.querySelector(".today-header h2");
+    assertDefined(headerTitle, "headerTitle");
     headerTitle.textContent = `${dayOfWeek}'s Workout`;
 
-    if (workout) {
-        workoutNameElement.textContent = workout.name;
+    const workoutName = exerciseView.querySelector(".workout-name");
+    assertDefined(workoutName, "workoutName");
+    workoutName.textContent = workout.name;
+
+    const errorState = exerciseView.querySelector(".error-state");
+    assertDefined(errorState, "errorState");
+    if (errorState) {
         errorState.classList.add("hidden");
-        exerciseContainer.classList.remove("hidden");
-        exerciseContainer.innerHTML = "";
-        exerciseContainer.appendChild(createWorkoutSection(workout));
-    } else {
-        workoutNameElement.textContent = "Rest Day";
-        errorState.classList.remove("hidden");
-        exerciseContainer.classList.add("hidden");
+    }
+
+    initializeWorkout(workout);
+
+    // Add event listeners
+    const form = exerciseView.querySelector(".set-completion-form");
+    assertDefined(form, "form");
+    if (form instanceof HTMLFormElement) {
+        form.addEventListener("submit", handleSetCompletion);
+    }
+
+    const startButton = exerciseView.querySelector("#start-set");
+    assertDefined(startButton, "startButton");
+    if (startButton instanceof HTMLButtonElement) {
+        startButton.addEventListener("click", handleStartSet);
+    }
+
+    const prevButton = exerciseView.querySelector(".prev-exercise");
+    assertDefined(prevButton, "prevButton");
+    const nextButton = exerciseView.querySelector(".next-exercise");
+    assertDefined(nextButton, "nextButton");
+
+    if (prevButton instanceof HTMLButtonElement) {
+        prevButton.addEventListener("click", () => navigateExercise(-1));
+    }
+
+    if (nextButton instanceof HTMLButtonElement) {
+        nextButton.addEventListener("click", () => navigateExercise(1));
     }
 }
 
@@ -505,9 +733,9 @@ initializeApp();
 
 // UTILS
 
-/** @type {<T>(value: T | null | undefined) => asserts value is T} */
-function assertDefined(value) {
+/** @type {<T>(value: T | null | undefined, name?: string) => asserts value is T} */
+function assertDefined(value, name) {
     if (value === undefined || value === null) {
-        throw new Error("Value is undefined or null");
+        throw new Error(`${name || "Value"} is not defined`);
     }
 }
