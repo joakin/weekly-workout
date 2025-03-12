@@ -1,10 +1,59 @@
+// @ts-check
+
+/**
+ * @typedef {'workouts' | 'weekly-plan'} ViewType
+ */
+
+/**
+ * @typedef {Object} Exercise
+ * @property {string} name
+ * @property {number} sets
+ * @property {number} reps
+ * @property {string} [notes]
+ * @property {Exercise} [superset]
+ */
+
+/**
+ * @typedef {Object} Workout
+ * @property {string} name
+ * @property {Exercise[]} exercises
+ */
+
+/**
+ * @typedef {{[K in 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday']: string | null}} WeeklyPlan */
+
+/**
+ * @typedef {Object} Routes
+ * @property {string} WEEKLY_PLAN
+ * @property {string} WORKOUTS
+ * @property {(day: string) => string} WEEKLY_DAY
+ */
+
+/**
+ * @typedef {Object} DOMElements
+ * @property {HTMLElement} menuToggle
+ * @property {HTMLElement} navMenu
+ * @property {NodeListOf<HTMLAnchorElement>} navLinks
+ * @property {NodeListOf<HTMLElement>} views
+ * @property {NodeListOf<HTMLElement>} dayCards
+ * @property {HTMLElement} dayWorkoutView
+ * @property {HTMLElement} backButton
+ * @property {HTMLElement} workoutContainer
+ * @property {HTMLElement} daysGrid
+ * @property {HTMLElement} workoutsContainer
+ */
+
 // Constants
+/** @type {Record<'WORKOUTS' | 'WEEKLY_PLAN', ViewType>} */
 const VIEWS = {
     WORKOUTS: 'workouts',
     WEEKLY_PLAN: 'weekly-plan'
 };
+
+/** @type {ViewType} */
 const DEFAULT_VIEW = VIEWS.WEEKLY_PLAN;
 
+/** @type {Routes} */
 const ROUTES = {
     WEEKLY_PLAN: `/${VIEWS.WEEKLY_PLAN}`,
     WORKOUTS: `/${VIEWS.WORKOUTS}`,
@@ -12,9 +61,10 @@ const ROUTES = {
 };
 
 // Cache
+/** @type {Workout[] | null} */
 let workoutsCache = null;
 
-// Weekly plan data
+/** @type {WeeklyPlan} */
 const weeklyPlan = {
     monday: 'Push 1',
     tuesday: 'Pull 1',
@@ -25,53 +75,77 @@ const weeklyPlan = {
     sunday: null
 };
 
-// Cache DOM elements
+// Ensure all DOM elements exist before creating the elements object
+const menuToggle = /** @type {HTMLElement} */ (document.getElementById('menu-toggle'));
+const navMenu = /** @type {HTMLElement} */ (document.getElementById('nav-menu'));
+const dayWorkoutView = /** @type {HTMLElement} */ (document.getElementById('day-workout'));
+const backButton = /** @type {HTMLElement} */ (document.querySelector('.back-button'));
+const workoutContainer = /** @type {HTMLElement} */ (document.querySelector('.workout-container'));
+const daysGrid = /** @type {HTMLElement} */ (document.querySelector('.days-grid'));
+const workoutsContainer = /** @type {HTMLElement} */ (document.querySelector('.workouts-grid'));
+
+if (!menuToggle || !navMenu || !dayWorkoutView || !backButton || 
+    !workoutContainer || !daysGrid || !workoutsContainer) {
+    throw new Error('Required DOM elements not found');
+}
+
+/** @type {DOMElements} */
 const elements = {
-    menuToggle: document.getElementById('menu-toggle'),
-    navMenu: document.getElementById('nav-menu'),
-    navLinks: document.querySelectorAll('.nav-link'),
-    views: document.querySelectorAll('.view'),
-    dayCards: document.querySelectorAll('.day-card'),
-    dayWorkoutView: document.getElementById('day-workout'),
-    backButton: document.querySelector('.back-button'),
-    workoutContainer: document.querySelector('.workout-container'),
-    daysGrid: document.querySelector('.days-grid'),
-    workoutsContainer: document.querySelector('.workouts-grid')
+    menuToggle,
+    navMenu,
+    navLinks: /** @type {NodeListOf<HTMLAnchorElement>} */ (document.querySelectorAll('.nav-link')),
+    views: /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.view')),
+    dayCards: /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.day-card')),
+    dayWorkoutView,
+    backButton,
+    workoutContainer,
+    daysGrid,
+    workoutsContainer
 };
 
 // Utility functions
 const utils = {
+    /** @type {(string: string) => string} */
     capitalizeFirstLetter: (string) => string.charAt(0).toUpperCase() + string.slice(1),
     
+    /** @type {(tag: string, className?: string) => HTMLElement} */
     createElementWithClass: (tag, className) => {
         const element = document.createElement(tag);
         if (className) element.className = className;
         return element;
     },
     
+    /** @type {(element: HTMLElement, text: string) => void} */
     setElementText: (element, text) => {
         element.textContent = text;
     },
     
+    /** @type {(element: HTMLElement, show: boolean) => void} */
     toggleVisibility: (element, show) => {
-        element.style.display = show ? (element.dataset.defaultDisplay || 'block') : 'none';
+        // Using dataset to store the default display value
+        element.style.display = show ? (element.dataset['defaultDisplay'] || 'block') : 'none';
     },
 
+    /** @type {() => boolean} */
     isMobileMenuVisible: () => {
         return window.getComputedStyle(elements.menuToggle).display !== 'none';
     }
 };
 
 // Navigation handling
+/** @type {(path: string) => void} */
 function showView(path) {
     // Remove leading slash if present
     path = path.startsWith('/') ? path.substring(1) : path;
     const [section, param] = path.split('/');
     
     if (section === VIEWS.WEEKLY_PLAN && param) {
-        if (weeklyPlan[param]) {
+        // Type guard to ensure param is a valid day
+        if (isValidDay(param) && weeklyPlan[param]) {
             showDayWorkout(param);
             return;
+        } else {
+            console.error(`Invalid day: ${param}`);
         }
     }
 
@@ -82,15 +156,22 @@ function showView(path) {
                   section === VIEWS.WEEKLY_PLAN ? VIEWS.WEEKLY_PLAN : 
                   DEFAULT_VIEW;
                   
-    document.getElementById(viewId).classList.add('active');
+    const viewElement = document.getElementById(viewId);
+    if (viewElement) {
+        viewElement.classList.add('active');
+    } else {
+        console.error(`Could not find view: ${viewId}`);
+    }
 
-    // Update active state of nav links based on section
     elements.navLinks.forEach(link => {
         link.classList.remove('active');
-        const linkPath = link.getAttribute('href').substring(2); // Remove #/ prefix
-        const linkSection = linkPath.split('/')[0];
-        if (linkSection === section) {
-            link.classList.add('active');
+        const href = link.getAttribute('href');
+        if (href) {
+            const linkPath = href.substring(2); // Remove #/ prefix
+            const linkSection = linkPath.split('/')[0];
+            if (linkSection === section) {
+                link.classList.add('active');
+            }
         }
     });
 
@@ -99,12 +180,19 @@ function showView(path) {
     }
 }
 
+/** @type {() => void} */
 function toggleMenu() {
     elements.menuToggle.classList.toggle('active');
     elements.navMenu.classList.toggle('active');
 }
 
 // Weekly plan handling
+/** @type {(day: string) => day is keyof WeeklyPlan} */
+function isValidDay(day) {
+    return day in weeklyPlan;
+}
+
+/** @type {(day: keyof WeeklyPlan) => void} */
 function showDayWorkout(day) {
     const workoutName = weeklyPlan[day];
     if (!workoutName) return;
@@ -112,19 +200,25 @@ function showDayWorkout(day) {
     utils.toggleVisibility(elements.daysGrid, false);
     elements.dayWorkoutView.classList.remove('hidden');
 
-    const dayTitle = elements.dayWorkoutView.querySelector('.day-title h2');
-    const workoutType = elements.dayWorkoutView.querySelector('.day-title p');
-    utils.setElementText(dayTitle, utils.capitalizeFirstLetter(day));
-    utils.setElementText(workoutType, workoutName);
+    const dayTitle = /** @type {HTMLElement | null} */ (elements.dayWorkoutView.querySelector('.day-title h2'));
+    const workoutType = /** @type {HTMLElement | null} */ (elements.dayWorkoutView.querySelector('.day-title p'));
+    if (dayTitle && workoutType) {
+        utils.setElementText(dayTitle, utils.capitalizeFirstLetter(day));
+        utils.setElementText(workoutType, workoutName);
+    }
 
-    loadWorkout(workoutName, workoutsCache);
+    if (workoutsCache) {
+        loadWorkout(workoutName, workoutsCache);
+    }
 }
 
+/** @type {() => void} */
 function showWeekView() {
     utils.toggleVisibility(elements.daysGrid, true);
     elements.dayWorkoutView.classList.add('hidden');
 }
 
+/** @type {(workoutName: string, workouts: Workout[]) => void} */
 function loadWorkout(workoutName, workouts) {
     const workout = workouts.find(w => w.name === workoutName);
     if (workout) {
@@ -135,20 +229,28 @@ function loadWorkout(workoutName, workouts) {
     }
 }
 
+/** @type {() => void} */
 function populateWeeklyView() {
-    const template = document.getElementById('day-card-template');
+    const template = /** @type {HTMLTemplateElement | null} */ (document.getElementById('day-card-template'));
+    if (!template) return;
+    
     const daysGrid = elements.daysGrid;
     
     Object.entries(weeklyPlan).forEach(([day, workout]) => {
-        const card = template.content.cloneNode(true).querySelector('.day-card');
-        card.dataset.day = day;
+        const content = template.content.cloneNode(true);
+        const card = /** @type {HTMLElement | null} */ (content instanceof DocumentFragment ? content.querySelector('.day-card') : null);
+        if (!card) return;
+        
+        card.dataset['day'] = day;
         if (!workout) card.classList.add('rest');
         
         const title = card.querySelector('h2');
         const text = card.querySelector('p');
         
-        utils.setElementText(title, utils.capitalizeFirstLetter(day));
-        utils.setElementText(text, workout || 'Rest Day');
+        if (title && text) {
+            utils.setElementText(/** @type {HTMLElement} */ (title), utils.capitalizeFirstLetter(day));
+            utils.setElementText(/** @type {HTMLElement} */ (text), workout || 'Rest Day');
+        }
         
         if (workout) {
             card.addEventListener('click', () => {
@@ -161,11 +263,11 @@ function populateWeeklyView() {
 }
 
 // Event listeners setup
+/** @type {() => void} */
 function setupEventListeners() {
     elements.menuToggle.addEventListener('click', toggleMenu);
 
     elements.navLinks.forEach(link => {
-        
         link.addEventListener('click', () => {
             if (utils.isMobileMenuVisible()) {
                 toggleMenu();
@@ -186,6 +288,7 @@ function setupEventListeners() {
 }
 
 // Fetch workouts data
+/** @type {() => Promise<Workout[]>} */
 async function fetchWorkouts() {
     try {
         const response = await fetch('workouts.json');
@@ -198,48 +301,31 @@ async function fetchWorkouts() {
     }
 }
 
-function createExerciseElement(exercise) {
-    const li = utils.createElementWithClass('li', 'exercise-item');
+/** @type {(exercise: Exercise, isSuperset?: boolean) => HTMLElement} */
+function createExerciseElement(exercise, isSuperset = false) {
+    const li = utils.createElementWithClass('li', `exercise-item${isSuperset ? ' superset' : ''}`);
     const nameDiv = utils.createElementWithClass('div', 'exercise-name');
     const setsDiv = utils.createElementWithClass('div', 'exercise-sets');
 
-    utils.setElementText(nameDiv, exercise.name);
+    utils.setElementText(nameDiv, isSuperset ? `Superset: ${exercise.name}` : exercise.name);
     utils.setElementText(setsDiv, `${exercise.sets} sets × ${exercise.reps}`);
 
     li.append(nameDiv, setsDiv);
 
     if (exercise.notes) {
         const notesDiv = utils.createElementWithClass('div', 'exercise-notes');
-        notesDiv.innerHTML = `ℹ <span>${exercise.notes}</span>`;
+        notesDiv.innerHTML = `${isSuperset ? '★' : 'ℹ'} <span>${exercise.notes}</span>`;
         li.appendChild(notesDiv);
     }
 
     if (exercise.superset) {
-        li.appendChild(createSupersetElement(exercise.superset));
+        li.appendChild(createExerciseElement(exercise.superset, true));
     }
 
     return li;
 }
 
-function createSupersetElement(superset) {
-    const supersetDiv = utils.createElementWithClass('div', 'exercise-item superset');
-    const nameDiv = utils.createElementWithClass('div', 'exercise-name');
-    const setsDiv = utils.createElementWithClass('div', 'exercise-sets');
-
-    utils.setElementText(nameDiv, `Superset: ${superset.name}`);
-    utils.setElementText(setsDiv, `${superset.sets} sets × ${superset.reps}`);
-
-    supersetDiv.append(nameDiv, setsDiv);
-
-    if (superset.notes) {
-        const notesDiv = utils.createElementWithClass('div', 'exercise-notes');
-        notesDiv.innerHTML = `★ ${superset.notes}`;
-        supersetDiv.appendChild(notesDiv);
-    }
-
-    return supersetDiv;
-}
-
+/** @type {(workout: Workout) => HTMLElement} */
 function createWorkoutSection(workout) {
     const section = utils.createElementWithClass('section', 'workout-section');
     const title = utils.createElementWithClass('h2');
@@ -254,6 +340,7 @@ function createWorkoutSection(workout) {
     return section;
 }
 
+/** @type {(workouts: Workout[]) => void} */
 function renderWorkouts(workouts) {
     elements.workoutsContainer.innerHTML = '';
     try {
@@ -267,6 +354,7 @@ function renderWorkouts(workouts) {
 }
 
 // Initialize the app
+/** @type {() => Promise<void>} */
 async function initializeApp() {
     try {
         // Fetch and cache workouts first
