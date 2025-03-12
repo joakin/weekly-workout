@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    // Enable JavaScript checking
+    "allowJs": true,
+    "checkJs": true,
+    
+    // Don't emit files
+    "noEmit": true,
+    
+    // Strictest possible settings
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    
+    // Module settings
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "target": "ESNext",
+    
+    // Additional checks
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    
+    // DOM types
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
+  },
+  "include": ["public/**/*.js"],
+  "exclude": ["node_modules"]
+} 
