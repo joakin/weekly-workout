@@ -1,6 +1,8 @@
 :root {
     /* Colors */
     --primary-color: #2563eb;
+    --success-color: #22c55e;
+    --disabled-color: #9ca3af;
     --text-color: #1f2937;
     --text-muted: #6b7280;
     --text-light: #4b5563;
@@ -554,4 +556,198 @@ nav {
     #weekly-plan .day-card {
         padding: var(--spacing-md);
     }
+}
+
+/* Active Exercise */
+.active-exercise {
+    padding: var(--spacing-lg);
+    background: var(--section-bg);
+    border-radius: var(--spacing-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.active-exercise-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.active-exercise-title {
+    font-size: var(--font-size-xl);
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.exercise-progress {
+    font-size: var(--font-size-lg);
+    color: var(--text-light);
+}
+
+.active-exercise-info {
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: var(--section-bg-alt);
+    border-radius: var(--spacing-xs);
+}
+
+.target-reps {
+    font-size: var(--font-size-lg);
+    color: var(--text-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.set-completion-form {
+    display: grid;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--spacing-sm);
+}
+
+.set-completion-form input {
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--spacing-xs);
+    font-size: var(--font-size-base);
+}
+
+.set-completion-form input[type="number"] {
+    width: 120px;
+}
+
+.set-completion-form input[type="text"] {
+    width: 100%;
+}
+
+.set-completion-form button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--spacing-xs);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.set-completion-form button:hover {
+    opacity: 0.9;
+}
+
+.completed-sets {
+    margin-bottom: var(--spacing-xl);
+}
+
+.sets-title {
+    font-size: var(--font-size-lg);
+    color: var(--text-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.sets-list {
+    list-style: none;
+}
+
+.set-item {
+    padding: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-light);
+}
+
+.set-item:last-child {
+    border-bottom: none;
+}
+
+.exercise-controls {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.exercise-controls button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--section-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--spacing-xs);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.exercise-controls button:hover:not(:disabled) {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.exercise-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+    .active-exercise-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+    .set-completion-form {
+        grid-template-columns: 1fr;
+    }
+
+    .set-completion-form input[type="number"] {
+        width: 100%;
+    }
+
+    .exercise-controls {
+        flex-direction: column;
+    }
+
+    .exercise-controls button {
+        width: 100%;
+    }
+}
+
+.set-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+.set-buttons button {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--spacing-xs);
+    font-size: var(--font-size-base);
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.set-buttons button:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.set-buttons button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+#start-set {
+    background-color: var(--success-color);
+}
+
+#complete-set {
+    background-color: var(--primary-color);
+}
+
+#start-set:disabled, #complete-set:disabled {
+    background-color: var(--disabled-color);
 } 
