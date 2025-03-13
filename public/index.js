@@ -7,15 +7,6 @@ import { formatRange } from "./data/number-range.js";
  */
 
 /**
- * @typedef {Object} Exercise
- * @property {string} name
- * @property {import("./data/number-range.js").NumberRange} sets
- * @property {import("./data/number-range.js").NumberRange} reps
- * @property {string} [notes]
- * @property {Exercise} [superset]
- */
-
-/**
  * @typedef {Object} PerformedSet
  * @property {number} reps
  * @property {number} weight
@@ -37,15 +28,6 @@ import { formatRange } from "./data/number-range.js";
  * @property {ExerciseProgress[]} exercises
  * @property {number} currentExerciseIndex
  */
-
-/**
- * @typedef {Object} Workout
- * @property {string} name
- * @property {import("./data/exercise.js").Exercise[]} exercises
- */
-
-/**
- * @typedef {{[K in 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday']: string | null}} WeeklyPlan */
 
 /**
  * @typedef {Object} Routes
@@ -112,13 +94,13 @@ const ROUTES = {
 };
 
 // Cache
-/** @type {Workout[] | null} */
+/** @type {import("./data/workout.js").Workout[] | null} */
 let workoutsCache = null;
 
 /** @type {WorkoutProgress | null} */
 let activeWorkout = null;
 
-/** @type {WeeklyPlan} */
+/** @type {import("./components/weekly-plan/weekly-plan.js").WeeklyPlan} */
 const weeklyPlan = {
     monday: "Push 1",
     tuesday: "Pull 1",
@@ -402,12 +384,12 @@ function toggleMenu() {
 }
 
 // Weekly plan handling
-/** @type {(day: string) => day is keyof WeeklyPlan} */
+/** @type {(day: string) => day is keyof import("./components/weekly-plan/weekly-plan.js").WeeklyPlan} */
 function isValidDay(day) {
     return day in weeklyPlan;
 }
 
-/** @type {(day: keyof WeeklyPlan, workouts: Workout[]) => void} */
+/** @type {(day: keyof import("./components/weekly-plan/weekly-plan.js").WeeklyPlan, workouts: import("./data/workout.js").Workout[]) => void} */
 function showDayWorkout(day, workouts) {
     const workoutName = weeklyPlan[day];
     if (!workoutName) return;
@@ -435,7 +417,7 @@ function showWeekView() {
     elements.dayWorkoutView.classList.add("hidden");
 }
 
-/** @type {(workoutName: string, workouts: Workout[]) => void} */
+/** @type {(workoutName: string, workouts: import("./data/workout.js").Workout[]) => void} */
 function loadWorkout(workoutName, workouts) {
     const workout = workouts.find((w) => w.name === workoutName);
     if (workout) {
@@ -455,7 +437,7 @@ function populateWeeklyView() {
 }
 
 /**
- * @param {Workout} workout
+ * @param {import("./data/workout.js").Workout} workout
  */
 function initializeWorkout(workout) {
     activeWorkout = {
@@ -596,15 +578,16 @@ function navigateExercise(direction) {
 }
 
 /**
- * @param {Workout[]} workouts
+ * @param {import("./data/workout.js").Workout[]} workouts
  */
 function showExerciseView(workouts) {
     const dayOfWeek = new Date().toLocaleDateString("en-US", {
         weekday: "long",
     });
-    const lowerDayOfWeek = /** @type {keyof WeeklyPlan} */ (
-        dayOfWeek.toLowerCase()
-    );
+    const lowerDayOfWeek = dayOfWeek.toLowerCase();
+    if (!isValidDay(lowerDayOfWeek)) {
+        throw new Error(`Invalid day: ${lowerDayOfWeek}`);
+    }
 
     const workout = workouts.find((w) => w.name === weeklyPlan[lowerDayOfWeek]);
     if (!workout) {
@@ -659,9 +642,10 @@ function setupEventListeners() {
             const dayOfWeek = new Date().toLocaleDateString("en-US", {
                 weekday: "long",
             });
-            const lowerDayOfWeek = /** @type {keyof WeeklyPlan} */ (
-                dayOfWeek.toLowerCase()
-            );
+            const lowerDayOfWeek =
+                /** @type {keyof import("./components/weekly-plan/weekly-plan.js").WeeklyPlan} */ (
+                    dayOfWeek.toLowerCase()
+                );
             assertDefined(workoutsCache, "workoutsCache");
             const workout = workoutsCache.find(
                 (w) => w.name === weeklyPlan[lowerDayOfWeek]
@@ -684,7 +668,7 @@ function setupEventListeners() {
 }
 
 // Fetch workouts data
-/** @type {() => Promise<Workout[]>} */
+/** @type {() => Promise<import("./data/workout.js").Workout[]>} */
 async function fetchWorkouts() {
     try {
         const response = await fetch("workouts.json");
@@ -697,7 +681,7 @@ async function fetchWorkouts() {
     }
 }
 
-/** @type {(workouts: Workout[]) => void} */
+/** @type {(workouts: import("./data/workout.js").Workout[]) => void} */
 function renderWorkouts(workouts) {
     elements.workoutsContainer.innerHTML = "";
     try {
