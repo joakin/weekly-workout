@@ -5,6 +5,9 @@
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
 .weekly-plan .day-card {
@@ -14,6 +17,7 @@
     box-shadow: var(--shadow-sm);
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
 }
 
 .weekly-plan .day-card:hover {
@@ -23,6 +27,14 @@
 
 .weekly-plan .day-card.rest {
     background-color: var(--section-bg-alt);
+}
+
+.weekly-plan .day-card .day-card-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .weekly-plan .day-card h2 {

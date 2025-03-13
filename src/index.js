@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { make as WorkoutSection } from "./components/workout-section/WorkoutSection.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 import { make as Workouts } from "./components/workouts/Workouts.res.mjs";
+import { make as WeeklyPlan } from "./components/weekly-plan-grid/WeeklyPlanGrid.res.mjs";
 
 if (process.env.NODE_ENV === "development") {
     // Add live reload for development
@@ -13,7 +14,6 @@ if (process.env.NODE_ENV === "development") {
 }
 
 import "./style.css";
-import { createWeeklyPlan } from "./components/weekly-plan/weekly-plan.js";
 import { formatRange } from "./data/number-range.js";
 
 /**
@@ -142,7 +142,7 @@ const workoutContainer = /** @type {HTMLElement} */ (
     document.querySelector(".workout-container")
 );
 const weeklyPlanGrid = /** @type {HTMLElement} */ (
-    document.querySelector(".weekly-plan")
+    document.querySelector("#weekly-plan")
 );
 const workoutsContainer = /** @type {HTMLElement} */ (
     document.querySelector("#workouts")
@@ -444,9 +444,11 @@ function loadWorkout(workoutName, workouts) {
 
 /** @type {() => void} */
 function populateWeeklyView() {
-    elements.weeklyPlanGrid.innerHTML = "";
-    elements.weeklyPlanGrid.appendChild(
-        createWeeklyPlan(weeklyPlan, ROUTES.WEEKLY_PLAN)
+    const root = createRoot(elements.weeklyPlanGrid);
+    root.render(
+        JsxRuntime.jsx(WeeklyPlan, {
+            weeklyPlan,
+        })
     );
 }
 
