@@ -7,6 +7,29 @@ import * as JsxRuntime from "react/jsx-runtime";
 import './exercise-list.css';
 ;
 
+function ExerciseList$ExerciseContainer(props) {
+  var children = props.children;
+  var isSuperset = props.isSuperset;
+  var className = "exercise-item" + (
+    isSuperset ? " superset" : ""
+  );
+  if (isSuperset) {
+    return JsxRuntime.jsx("li", {
+                children: children,
+                className: className
+              });
+  } else {
+    return JsxRuntime.jsx("div", {
+                children: children,
+                className: className
+              });
+  }
+}
+
+var ExerciseContainer = {
+  make: ExerciseList$ExerciseContainer
+};
+
 function make(props) {
   var __isSuperset = props.isSuperset;
   var exercise = props.exercise;
@@ -16,7 +39,8 @@ function make(props) {
   var reps = NumberRange.formatRange(exercise.reps);
   var notes = exercise.notes;
   var superset = exercise.superset;
-  return JsxRuntime.jsxs("li", {
+  return JsxRuntime.jsxs(ExerciseList$ExerciseContainer, {
+              isSuperset: isSuperset,
               children: [
                 JsxRuntime.jsx("div", {
                       children: name,
@@ -42,10 +66,7 @@ function make(props) {
                         exercise: superset,
                         isSuperset: true
                       }) : null
-              ],
-              className: "exercise-item" + (
-                isSuperset ? " superset" : ""
-              )
+              ]
             });
 }
 
@@ -67,6 +88,7 @@ function ExerciseList(props) {
 var make$1 = ExerciseList;
 
 export {
+  ExerciseContainer ,
   ExerciseElement ,
   make$1 as make,
 }

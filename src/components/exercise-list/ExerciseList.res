@@ -1,5 +1,17 @@
 %%raw("import './exercise-list.css';")
 
+module ExerciseContainer = {
+  @react.component
+  let make = (~isSuperset: bool, ~children: React.element) => {
+    let className = "exercise-item" ++ (isSuperset ? " superset" : "")
+    if isSuperset {
+      <li className> {children} </li>
+    } else {
+      <div className> {children} </div>
+    }
+  }
+}
+
 module ExerciseElement = {
   @react.component
   let rec make = (~exercise: Exercise.t, ~isSuperset: bool=false) => {
@@ -7,7 +19,7 @@ module ExerciseElement = {
     let sets = NumberRange.formatRange(exercise.sets)->React.string
     let reps = NumberRange.formatRange(exercise.reps)->React.string
 
-    <li className={"exercise-item" ++ (isSuperset ? " superset" : "")}>
+    <ExerciseContainer isSuperset>
       <div className="exercise-name"> {React.string(name)} </div>
       <div className="exercise-sets">
         sets
@@ -25,7 +37,7 @@ module ExerciseElement = {
       | Some(superset) => React.createElement(make, {exercise: superset, isSuperset: true})
       | None => React.null
       }}
-    </li>
+    </ExerciseContainer>
   }
 }
 
