@@ -27,3 +27,11 @@ dist-ssr
 /lib/
 .bsb.lock
 .merlin
+src/**/*.res.mjs
+
+
+# App assets
+public/*.js
+public/*.js.map
+public/*.css
+public/*.css.map
