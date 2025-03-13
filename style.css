@@ -1,4 +1,6 @@
 @import "./components/exercise-list/exercise-list.css";
+@import "./components/workout-section/workout-section.css";
+@import "./components/weekly-plan/weekly-plan.css";
 
 :root {
     /* Colors */
@@ -14,14 +16,14 @@
     --border-color: #e5e7eb;
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-    
+
     /* Spacing */
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
     --spacing-lg: 1.5rem;
     --spacing-xl: 2rem;
-    
+
     /* Typography */
     --font-size-xs: 0.75rem;
     --font-size-sm: 0.9rem;
@@ -39,7 +41,8 @@
 }
 
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.5;
     color: var(--text-color);
     background-color: var(--background-color);
@@ -89,7 +92,7 @@ nav {
 
 .menu-icon::before,
 .menu-icon::after {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     width: 100%;
@@ -150,51 +153,12 @@ nav {
 }
 
 /* Grid layouts */
-.workouts-grid,
-.days-grid {
+.workouts-grid {
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
-    gap: var(--spacing-md);
-}
-
-.workouts-grid {
     gap: var(--spacing-xl);
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
-}
-
-.days-grid {
-    gap: var(--spacing-md);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-}
-
-/* Cards */
-.day-card {
-    background: var(--section-bg);
-    border-radius: var(--spacing-sm);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-sm);
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.day-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.day-card.rest {
-    background-color: var(--section-bg-alt);
-}
-
-.day-card h2 {
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-sm);
-    color: var(--primary-color);
-}
-
-.day-card p {
-    color: var(--text-color);
 }
 
 /* Day Header */
@@ -276,7 +240,7 @@ nav {
     #menu-toggle {
         display: flex;
         position: absolute;
-        top: -2.75rem;  /* Adjusted to align with the more compact header */
+        top: -2.75rem; /* Adjusted to align with the more compact header */
         right: 0;
     }
 
@@ -306,13 +270,8 @@ nav {
         padding: var(--spacing-sm) var(--spacing-md);
     }
 
-    .workout-section,
-    .day-card {
+    .workout-section {
         padding: var(--spacing-md);
-    }
-
-    .days-grid {
-        gap: var(--spacing-sm);
     }
 }
 
@@ -355,39 +314,6 @@ nav {
 }
 
 /* Weekly Plan View */
-#weekly-plan .days-grid {
-    gap: var(--spacing-md);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-}
-
-#weekly-plan .day-card {
-    background: var(--section-bg);
-    border-radius: var(--spacing-sm);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-sm);
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-#weekly-plan .day-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-#weekly-plan .day-card.rest {
-    background-color: var(--section-bg-alt);
-}
-
-#weekly-plan .day-card h2 {
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-sm);
-    color: var(--primary-color);
-}
-
-#weekly-plan .day-card p {
-    color: var(--text-color);
-}
-
 #weekly-plan .day-header {
     display: flex;
     align-items: center;
@@ -419,20 +345,6 @@ nav {
 #workouts .workouts-grid {
     gap: var(--spacing-xl);
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
-}
-
-/* Shared workout section styles (used in both workouts and exercise views) */
-.workout-section {
-    background: var(--section-bg);
-    border-radius: var(--spacing-sm);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-sm);
-}
-
-.workout-section h2 {
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-md);
-    color: var(--primary-color);
 }
 
 /* Active Exercise */
@@ -650,7 +562,8 @@ nav {
     background-color: var(--primary-color);
 }
 
-#start-set:disabled, #complete-set:disabled {
+#start-set:disabled,
+#complete-set:disabled {
     background-color: var(--disabled-color);
 }
 

@@ -1,6 +1,5 @@
-// @ts-check
-
-import { createExerciseList } from "./components/exercise-list/exercise-list.js";
+import { createWorkoutSection } from "./components/workout-section/workout-section.js";
+import { createWeeklyPlan } from "./components/weekly-plan/weekly-plan.js";
 import { formatRange } from "./data/number-range.js";
 
 /**
@@ -34,7 +33,7 @@ import { formatRange } from "./data/number-range.js";
  * @typedef {Object} WorkoutProgress
  * @property {number} startTime
  * @property {number} endTime
- * @property {Workout} workout
+ * @property {import("./data/workout.js").Workout} workout
  * @property {ExerciseProgress[]} exercises
  * @property {number} currentExerciseIndex
  */
@@ -62,11 +61,11 @@ import { formatRange } from "./data/number-range.js";
  * @property {HTMLElement} navMenu
  * @property {NodeListOf<HTMLAnchorElement>} navLinks
  * @property {NodeListOf<HTMLElement>} views
- * @property {NodeListOf<HTMLElement>} dayCards
+ * @property {NodeListOf<HTMLElement>} weeklyPlanDayCards
  * @property {HTMLElement} dayWorkoutView
  * @property {HTMLElement} backButton
  * @property {HTMLElement} workoutContainer
- * @property {HTMLElement} daysGrid
+ * @property {HTMLElement} weeklyPlanGrid
  * @property {HTMLElement} workoutsContainer
  * @property {HTMLElement} exerciseView
  * @property {HTMLElement} exerciseTitle
@@ -90,7 +89,7 @@ import { formatRange } from "./data/number-range.js";
  * @property {NodeListOf<HTMLButtonElement>} exerciseStartWorkoutButtons
  * @property {HTMLElement} dayWorkoutTitle
  * @property {HTMLElement} dayWorkoutType
- * @property {HTMLTemplateElement} dayCardTemplate
+ * @property {HTMLTemplateElement} weeklyPlanDayCardTemplate
  */
 
 // Constants
@@ -146,8 +145,8 @@ const backButton = /** @type {HTMLElement} */ (
 const workoutContainer = /** @type {HTMLElement} */ (
     document.querySelector(".workout-container")
 );
-const daysGrid = /** @type {HTMLElement} */ (
-    document.querySelector(".days-grid")
+const weeklyPlanGrid = /** @type {HTMLElement} */ (
+    document.querySelector(".weekly-plan")
 );
 const workoutsContainer = /** @type {HTMLElement} */ (
     document.querySelector(".workouts-grid")
@@ -162,7 +161,7 @@ if (
     !dayWorkoutView ||
     !backButton ||
     !workoutContainer ||
-    !daysGrid ||
+    !weeklyPlanGrid ||
     !workoutsContainer ||
     !exerciseView
 ) {
@@ -236,8 +235,8 @@ const dayWorkoutTitle = /** @type {HTMLElement} */ (
 const dayWorkoutType = /** @type {HTMLElement} */ (
     dayWorkoutView.querySelector(".day-title p")
 );
-const dayCardTemplate = /** @type {HTMLTemplateElement} */ (
-    document.getElementById("day-card-template")
+const weeklyPlanDayCardTemplate = /** @type {HTMLTemplateElement} */ (
+    document.getElementById("weekly-plan-day-card-template")
 );
 
 if (
@@ -261,7 +260,7 @@ if (
     !exerciseWorkoutName ||
     !dayWorkoutTitle ||
     !dayWorkoutType ||
-    !dayCardTemplate
+    !weeklyPlanDayCardTemplate
 ) {
     throw new Error("Required exercise view elements not found");
 }
@@ -276,13 +275,13 @@ const elements = {
     views: /** @type {NodeListOf<HTMLElement>} */ (
         document.querySelectorAll(".view")
     ),
-    dayCards: /** @type {NodeListOf<HTMLElement>} */ (
-        document.querySelectorAll(".day-card")
+    weeklyPlanDayCards: /** @type {NodeListOf<HTMLElement>} */ (
+        document.querySelectorAll(".weekly-plan .day-card")
     ),
     dayWorkoutView,
     backButton,
     workoutContainer,
-    daysGrid,
+    weeklyPlanGrid,
     workoutsContainer,
     exerciseView,
     exerciseTitle,
@@ -306,7 +305,7 @@ const elements = {
     exerciseStartWorkoutButtons,
     dayWorkoutTitle,
     dayWorkoutType,
-    dayCardTemplate,
+    weeklyPlanDayCardTemplate,
 };
 
 // Utility functions
@@ -413,7 +412,7 @@ function showDayWorkout(day, workouts) {
     const workoutName = weeklyPlan[day];
     if (!workoutName) return;
 
-    utils.toggleVisibility(elements.daysGrid, false);
+    utils.toggleVisibility(elements.weeklyPlanGrid, false);
     elements.dayWorkoutView.classList.remove("hidden");
 
     const dayTitle = /** @type {HTMLElement | null} */ (
@@ -432,7 +431,7 @@ function showDayWorkout(day, workouts) {
 
 /** @type {() => void} */
 function showWeekView() {
-    utils.toggleVisibility(elements.daysGrid, true);
+    utils.toggleVisibility(elements.weeklyPlanGrid, true);
     elements.dayWorkoutView.classList.add("hidden");
 }
 
@@ -449,47 +448,10 @@ function loadWorkout(workoutName, workouts) {
 
 /** @type {() => void} */
 function populateWeeklyView() {
-    const template = /** @type {HTMLTemplateElement | null} */ (
-        document.getElementById("day-card-template")
+    elements.weeklyPlanGrid.innerHTML = "";
+    elements.weeklyPlanGrid.appendChild(
+        createWeeklyPlan(weeklyPlan, ROUTES.WEEKLY_PLAN)
     );
-    if (!template) return;
-
-    const daysGrid = elements.daysGrid;
-
-    Object.entries(weeklyPlan).forEach(([day, workout]) => {
-        const content = template.content.cloneNode(true);
-        const card = /** @type {HTMLElement | null} */ (
-            content instanceof DocumentFragment
-                ? content.querySelector(".day-card")
-                : null
-        );
-        if (!card) return;
-
-        card.dataset["day"] = day;
-        if (!workout) card.classList.add("rest");
-
-        const title = card.querySelector("h2");
-        const text = card.querySelector("p");
-
-        if (title && text) {
-            utils.setElementText(
-                /** @type {HTMLElement} */ (title),
-                utils.capitalizeFirstLetter(day)
-            );
-            utils.setElementText(
-                /** @type {HTMLElement} */ (text),
-                workout || "Rest Day"
-            );
-        }
-
-        if (workout) {
-            card.addEventListener("click", () => {
-                window.location.hash = `#${ROUTES.WEEKLY_DAY(day)}`;
-            });
-        }
-
-        daysGrid.appendChild(card);
-    });
 }
 
 /**
@@ -733,20 +695,6 @@ async function fetchWorkouts() {
         console.error("Error fetching workouts:", error);
         throw error;
     }
-}
-
-/** @type {(workout: Workout) => HTMLElement} */
-function createWorkoutSection(workout) {
-    const section = document.createElement("section");
-    section.className = "workout-section";
-
-    const title = document.createElement("h2");
-    title.textContent = workout.name;
-
-    const exerciseList = createExerciseList(workout.exercises);
-
-    section.append(title, exerciseList);
-    return section;
 }
 
 /** @type {(workouts: Workout[]) => void} */

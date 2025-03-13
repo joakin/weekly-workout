@@ -2,39 +2,39 @@
     list-style: none;
 }
 
-.exercise-item {
+.exercise-list .exercise-item {
     padding: var(--spacing-md);
     border-bottom: 1px solid var(--border-color);
 }
 
-.exercise-item:last-child {
+.exercise-list .exercise-item:last-child {
     border-bottom: none;
 }
 
-.exercise-name {
+.exercise-list .exercise-name {
     font-weight: 600;
     margin-bottom: var(--spacing-xs);
 }
 
-.exercise-sets {
+.exercise-list .exercise-sets {
     font-size: var(--font-size-sm);
     color: var(--text-light);
     margin-bottom: var(--spacing-sm);
 }
 
-.exercise-notes {
+.exercise-list .exercise-notes {
     font-size: var(--font-size-sm);
     color: var(--text-muted);
     margin-top: var(--spacing-md);
     padding-left: var(--spacing-sm);
 }
 
-.exercise-notes span {
+.exercise-list .exercise-notes span {
     font-style: italic;
 }
 
 /* Superset styles */
-.exercise-item.superset {
+.exercise-list .exercise-item.superset {
     margin-left: var(--spacing-md);
     margin-top: var(--spacing-sm);
     padding-left: var(--spacing-md);
@@ -42,7 +42,7 @@
     position: relative;
 }
 
-.exercise-item.superset::before {
+.exercise-list .exercise-item.superset::before {
     content: '';
     position: absolute;
     left: -2px;

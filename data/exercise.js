@@ -1,5 +1,3 @@
-// @ts-check
-
 /**
  * @typedef {Object} Exercise
  * @property {string} name
