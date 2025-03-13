@@ -1,5 +1,3 @@
-// @ts-check
-
 import { formatRange } from "../../data/number-range.js";
 
 /**

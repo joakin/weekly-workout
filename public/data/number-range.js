@@ -1,7 +1,7 @@
-// @ts-check
-
 /**
- * @typedef {{min: number, max?: number}} NumberRange
+ * @typedef {Object} NumberRange
+ * @property {number} min
+ * @property {number} [max]
  */
 
 /**
@@ -9,5 +9,5 @@
  * @returns {string}
  */
 export function formatRange(range) {
-    return range.max ? `${range.min}-${range.max}` : `${range.min}`;
+    return range.max ? `${range.min}-${range.max}` : range.min.toString();
 }
