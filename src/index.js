@@ -142,7 +142,7 @@ const workoutContainer = /** @type {HTMLElement} */ (
     document.querySelector(".workout-container")
 );
 const weeklyPlanGrid = /** @type {HTMLElement} */ (
-    document.querySelector("#weekly-plan")
+    document.querySelector(".weekly-plan")
 );
 const workoutsContainer = /** @type {HTMLElement} */ (
     document.querySelector("#workouts")
