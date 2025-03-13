@@ -1,6 +1,4 @@
 @react.component
 let make = () => {
-  <div className="app">
-    <TestComponent />
-  </div>
+  <div className="app"> {React.string("Empty")} </div>
 }
