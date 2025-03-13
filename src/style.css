@@ -148,15 +148,6 @@ nav {
     display: block;
 }
 
-/* Grid layouts */
-.workouts-grid {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    gap: var(--spacing-xl);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
-}
-
 /* Day Header */
 .day-header {
     display: flex;
@@ -335,12 +326,6 @@ nav {
     color: var(--text-color);
     font-size: var(--font-size-base);
     opacity: 0.8;
-}
-
-/* Workouts View */
-#workouts .workouts-grid {
-    gap: var(--spacing-xl);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
 }
 
 /* Active Exercise */
