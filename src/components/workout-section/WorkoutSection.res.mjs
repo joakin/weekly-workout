@@ -3,23 +3,27 @@
 import * as ExerciseList from "../exercise-list/ExerciseList.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 
-import "./workout-section.css";
+import './workout-section.css';
+;
+
 function WorkoutSection(props) {
-    var workout = props.workout;
-    return JsxRuntime.jsxs("section", {
-        children: [
-            JsxRuntime.jsx("h2", {
-                children: workout.name,
-            }),
-            JsxRuntime.jsx(ExerciseList.make, {
-                exercises: workout.exercises,
-            }),
-        ],
-        className: "workout-section",
-    });
+  var workout = props.workout;
+  return JsxRuntime.jsxs("section", {
+              children: [
+                JsxRuntime.jsx("h2", {
+                      children: workout.name
+                    }),
+                JsxRuntime.jsx(ExerciseList.make, {
+                      exercises: workout.exercises
+                    })
+              ],
+              className: "workout-section"
+            });
 }
 
 var make = WorkoutSection;
 
-export { make };
+export {
+  make ,
+}
 /*  Not a pure module */

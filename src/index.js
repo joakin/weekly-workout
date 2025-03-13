@@ -1,4 +1,8 @@
 import "./index.res.mjs";
+import { createRoot } from "react-dom/client";
+import { make as WorkoutSection } from "./components/workout-section/WorkoutSection.res.mjs";
+import * as JsxRuntime from "react/jsx-runtime";
+import { make as Workouts } from "./components/workouts/Workouts.res.mjs";
 
 if (process.env.NODE_ENV === "development") {
     // Add live reload for development
@@ -9,7 +13,6 @@ if (process.env.NODE_ENV === "development") {
 }
 
 import "./style.css";
-import { createWorkoutSection } from "./components/workout-section/workout-section.js";
 import { createWeeklyPlan } from "./components/weekly-plan/weekly-plan.js";
 import { formatRange } from "./data/number-range.js";
 
@@ -694,18 +697,8 @@ async function fetchWorkouts() {
 
 /** @type {(workouts: import("./data/workout.js").Workout[]) => void} */
 function renderWorkouts(workouts) {
-    elements.workoutsContainer.innerHTML = "";
-    try {
-        workouts.forEach((workout) => {
-            elements.workoutsContainer.appendChild(
-                createWorkoutSection(workout)
-            );
-        });
-    } catch (error) {
-        console.error("Failed to render workouts:", error);
-        elements.workoutsContainer.innerHTML =
-            "<p>Failed to load workouts. Please try refreshing the page.</p>";
-    }
+    const root = createRoot(elements.workoutsContainer);
+    root.render(JsxRuntime.jsx(Workouts, { workouts }));
 }
 
 // Initialize the app
@@ -742,4 +735,15 @@ function assertDefined(value, name) {
     if (value === undefined || value === null) {
         throw new Error(`${name || "Value"} is not defined`);
     }
+}
+
+/**
+ * @param {import("./data/workout.js").Workout} workout
+ * @returns {HTMLElement}
+ */
+function createWorkoutSection(workout) {
+    const container = document.createElement("div");
+    const root = createRoot(container);
+    root.render(JsxRuntime.jsx(WorkoutSection, { workout }));
+    return container;
 }
