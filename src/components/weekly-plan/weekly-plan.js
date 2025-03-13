@@ -1,3 +1,5 @@
+import "./weekly-plan.css";
+
 /**
  * @typedef {Object} WeeklyPlan
  * @property {string | null} monday

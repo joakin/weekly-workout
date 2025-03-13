@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/components/TestComponent.css"],
-  "sourcesContent": [".test-component {\n    background-color: #fff1c2;\n    padding: 20px;\n    border-radius: 8px;\n    margin: 20px;\n}\n"],
-  "mappings": ";AAAA,CAAC;AACG,oBAAkB;AAClB,WAAS;AACT,iBAAe;AACf,UAAQ;AACZ;",
-  "names": []
-}

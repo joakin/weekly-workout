@@ -7,7 +7,7 @@ const watch = process.argv.includes("--watch") || process.argv.includes("-w");
 const commonConfig = {
     entryPoints: ["src/index.js"],
     bundle: true,
-    outdir: "public/src",
+    outdir: "public/",
     jsx: "automatic",
     loader: {
         ".js": "jsx",

@@ -1,3 +1,4 @@
+import "./exercise-list.css";
 import { formatRange } from "../../data/number-range.js";
 
 /**

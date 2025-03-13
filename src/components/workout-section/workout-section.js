@@ -1,3 +1,4 @@
+import "./workout-section.css";
 import { createExerciseList } from "../exercise-list/exercise-list.js";
 
 /**

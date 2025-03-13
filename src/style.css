@@ -1,7 +1,3 @@
-@import "./components/exercise-list/exercise-list.css";
-@import "./components/workout-section/workout-section.css";
-@import "./components/weekly-plan/weekly-plan.css";
-
 :root {
     /* Colors */
     --primary-color: #2563eb;
