@@ -1,3 +1,5 @@
+@import "./components/exercise-list/exercise-list.css";
+
 :root {
     /* Colors */
     --primary-color: #2563eb;
@@ -255,62 +257,6 @@ nav {
     color: var(--primary-color);
 }
 
-/* Exercise items */
-.exercise-list {
-    list-style: none;
-}
-
-.exercise-item {
-    padding: var(--spacing-md);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.exercise-item:last-child {
-    border-bottom: none;
-}
-
-.exercise-name {
-    font-weight: 600;
-    margin-bottom: var(--spacing-xs);
-}
-
-.exercise-sets {
-    font-size: var(--font-size-sm);
-    color: var(--text-light);
-    margin-bottom: var(--spacing-sm);
-}
-
-.exercise-notes {
-    font-size: var(--font-size-xs);
-    color: var(--text-muted);
-    margin-top: var(--spacing-xs);
-    padding-left: var(--spacing-sm);
-}
-
-.exercise-notes span {
-    font-style: italic;
-}
-
-/* Superset styles */
-.exercise-item.superset {
-    margin-left: var(--spacing-md);
-    margin-top: var(--spacing-sm);
-    padding-left: var(--spacing-md);
-    border-left: 2px solid var(--primary-color);
-    position: relative;
-}
-
-.exercise-item.superset::before {
-    content: '';
-    position: absolute;
-    left: -2px;
-    top: calc(-1 * var(--spacing-sm));
-    width: 2px;
-    height: calc(100% + var(--spacing-md));
-    background: var(--primary-color);
-    opacity: 0.3;
-}
-
 /* Mobile Styles */
 @media (max-width: 640px) {
     body {
@@ -487,75 +433,6 @@ nav {
     font-size: var(--font-size-lg);
     margin-bottom: var(--spacing-md);
     color: var(--primary-color);
-}
-
-.exercise-list {
-    list-style: none;
-}
-
-.exercise-item {
-    padding: var(--spacing-md);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.exercise-item:last-child {
-    border-bottom: none;
-}
-
-.exercise-name {
-    font-weight: 600;
-    margin-bottom: var(--spacing-xs);
-}
-
-.exercise-sets {
-    font-size: var(--font-size-sm);
-    color: var(--text-light);
-    margin-bottom: var(--spacing-sm);
-}
-
-.exercise-notes {
-    font-size: var(--font-size-sm);
-    color: var(--text-muted);
-    margin-top: var(--spacing-md);
-    padding-left: var(--spacing-sm);
-}
-
-.exercise-notes span {
-    font-style: italic;
-}
-
-/* Superset styles */
-.exercise-item.superset {
-    margin-left: var(--spacing-md);
-    margin-top: var(--spacing-sm);
-    padding-left: var(--spacing-md);
-    border-left: 2px solid var(--primary-color);
-    position: relative;
-}
-
-.exercise-item.superset::before {
-    content: '';
-    position: absolute;
-    left: -2px;
-    top: calc(-1 * var(--spacing-sm));
-    width: 2px;
-    height: calc(100% + var(--spacing-md));
-    background: var(--primary-color);
-    opacity: 0.3;
-}
-
-/* Mobile Styles */
-@media (max-width: 640px) {
-    /* ... existing mobile styles ... */
-
-    #weekly-plan .days-grid {
-        gap: var(--spacing-sm);
-    }
-
-    .workout-section,
-    #weekly-plan .day-card {
-        padding: var(--spacing-md);
-    }
 }
 
 /* Active Exercise */
