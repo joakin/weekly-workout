@@ -1,0 +1,23 @@
+{
+    "name": "weekly-workout",
+    "private": true,
+    "version": "0.1.0",
+    "type": "module",
+    "scripts": {
+        "dev": "node scripts/build.js preview --watch",
+        "build": "node scripts/build.js production",
+        "res:build": "rescript",
+        "res:dev": "rescript build -w",
+        "res:clean": "rescript clean"
+    },
+    "dependencies": {
+        "@rescript/core": "^1.6.1",
+        "@rescript/react": "^0.12.1",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "rescript": "^11.1.4"
+    },
+    "devDependencies": {
+        "esbuild": "^0.25.1"
+    }
+}
