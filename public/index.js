@@ -1,18 +1,17 @@
 // @ts-check
 
+import { createExerciseList } from "./components/exercise-list/exercise-list.js";
+import { formatRange } from "./data/number-range.js";
+
 /**
  * @typedef {'workouts' | 'weekly-plan' | 'exercise'} ViewType
  */
 
 /**
- * @typedef {{min: number, max?: number}} NumberRange
- */
-
-/**
  * @typedef {Object} Exercise
  * @property {string} name
- * @property {NumberRange} sets
- * @property {NumberRange} reps
+ * @property {import("./data/number-range.js").NumberRange} sets
+ * @property {import("./data/number-range.js").NumberRange} reps
  * @property {string} [notes]
  * @property {Exercise} [superset]
  */
@@ -27,7 +26,7 @@
 
 /**
  * @typedef {Object} ExerciseProgress
- * @property {Exercise} exercise
+ * @property {import("./data/exercise.js").Exercise} exercise
  * @property {PerformedSet[]} completedSets
  */
 
@@ -43,7 +42,7 @@
 /**
  * @typedef {Object} Workout
  * @property {string} name
- * @property {Exercise[]} exercises
+ * @property {import("./data/exercise.js").Exercise[]} exercises
  */
 
 /**
@@ -513,39 +512,6 @@ function initializeWorkout(workout) {
 /** @type {number | null} */
 let currentSetStartTime = null;
 
-function bindActiveWorkoutEvents() {
-    const exerciseView = document.getElementById("exercise");
-    assertDefined(exerciseView, "exerciseView");
-
-    // Bind form submission
-    const form = exerciseView.querySelector(".set-completion-form");
-    assertDefined(form, "form");
-    if (form instanceof HTMLFormElement) {
-        form.addEventListener("submit", handleSetCompletion);
-    }
-
-    // Bind start button
-    const startButton = exerciseView.querySelector("#start-set");
-    assertDefined(startButton, "startButton");
-    if (startButton instanceof HTMLButtonElement) {
-        startButton.addEventListener("click", handleStartSet);
-    }
-
-    // Bind navigation buttons
-    const prevButton = exerciseView.querySelector(".prev-exercise");
-    const nextButton = exerciseView.querySelector(".next-exercise");
-    assertDefined(prevButton, "prevButton");
-    assertDefined(nextButton, "nextButton");
-
-    if (prevButton instanceof HTMLButtonElement) {
-        prevButton.addEventListener("click", () => navigateExercise(-1));
-    }
-
-    if (nextButton instanceof HTMLButtonElement) {
-        nextButton.addEventListener("click", () => navigateExercise(1));
-    }
-}
-
 function renderActiveWorkout() {
     if (!activeWorkout) return alert("No active workout");
 
@@ -769,56 +735,15 @@ async function fetchWorkouts() {
     }
 }
 
-/** @type {(exercise: Exercise, isSuperset?: boolean) => HTMLElement} */
-function createExerciseElement(exercise, isSuperset = false) {
-    const li = utils.createElementWithClass(
-        "li",
-        `exercise-item${isSuperset ? " superset" : ""}`
-    );
-    const nameDiv = utils.createElementWithClass("div", "exercise-name");
-    const setsDiv = utils.createElementWithClass("div", "exercise-sets");
-
-    utils.setElementText(
-        nameDiv,
-        isSuperset ? `Superset: ${exercise.name}` : exercise.name
-    );
-    utils.setElementText(
-        setsDiv,
-        `${formatRange(exercise.sets)} sets × ${formatRange(exercise.reps)}`
-    );
-
-    li.append(nameDiv, setsDiv);
-
-    if (exercise.notes) {
-        const notesDiv = utils.createElementWithClass("div", "exercise-notes");
-        notesDiv.innerHTML = `${isSuperset ? "★" : "ℹ"} <span>${
-            exercise.notes
-        }</span>`;
-        li.appendChild(notesDiv);
-    }
-
-    if (exercise.superset) {
-        li.appendChild(createExerciseElement(exercise.superset, true));
-    }
-
-    return li;
-}
-
-/** @type {(range: NumberRange) => string} */
-function formatRange(range) {
-    return range.max ? `${range.min}-${range.max}` : `${range.min}`;
-}
-
 /** @type {(workout: Workout) => HTMLElement} */
 function createWorkoutSection(workout) {
-    const section = utils.createElementWithClass("section", "workout-section");
-    const title = utils.createElementWithClass("h2");
-    const exerciseList = utils.createElementWithClass("ul", "exercise-list");
+    const section = document.createElement("section");
+    section.className = "workout-section";
 
-    utils.setElementText(title, workout.name);
-    workout.exercises.forEach((exercise) => {
-        exerciseList.appendChild(createExerciseElement(exercise));
-    });
+    const title = document.createElement("h2");
+    title.textContent = workout.name;
+
+    const exerciseList = createExerciseList(workout.exercises);
 
     section.append(title, exerciseList);
     return section;
