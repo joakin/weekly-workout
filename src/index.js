@@ -1,10 +1,10 @@
 import "./index.res.mjs";
 import { createRoot } from "react-dom/client";
-import { make as WorkoutSection } from "./components/workout-section/WorkoutSection.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 import { make as Workouts } from "./components/workouts/Workouts.res.mjs";
 import { make as WeeklyPlanGrid } from "./components/weekly-plan-grid/WeeklyPlanGrid.res.mjs";
 import { make as DayWorkout } from "./components/day-workout/DayWorkout.res.mjs";
+import { make as DailyWorkout } from "./components/daily-workout/DailyWorkout.res.mjs";
 import { Day } from "./data/WeeklyPlan.res.mjs";
 
 if (process.env.NODE_ENV === "development") {
@@ -16,7 +16,6 @@ if (process.env.NODE_ENV === "development") {
 }
 
 import "./style.css";
-import { formatRange } from "./data/number-range.js";
 
 /**
  * @typedef {'workouts' | 'weekly-plan' | 'exercise'} ViewType
@@ -107,9 +106,6 @@ const ROUTES = {
 // Cache
 /** @type {import("./data/workout.js").Workout[] | null} */
 let workoutsCache = null;
-
-/** @type {WorkoutProgress | null} */
-let activeWorkout = null;
 
 /** @type {import("./components/weekly-plan/weekly-plan.js").WeeklyPlan} */
 const weeklyPlan = {
@@ -213,30 +209,6 @@ const exerciseStartWorkoutButtons =
         exerciseView.querySelectorAll(".start-workout-button")
     );
 
-if (
-    !exerciseTitle ||
-    !exerciseProgress ||
-    !exerciseTargetReps ||
-    !exerciseNotes ||
-    !exerciseForm ||
-    !exerciseWeightInput ||
-    !exerciseRepsInput ||
-    !exerciseStartButton ||
-    !exerciseCompleteButton ||
-    !exerciseSetsList ||
-    !exercisePrevButton ||
-    !exerciseNextButton ||
-    !exercisePreWorkoutView ||
-    !exerciseActiveView ||
-    !exerciseWorkoutPreview ||
-    !exerciseErrorState ||
-    !exerciseHeaderTitle ||
-    !exerciseWorkoutName ||
-    !exerciseStartWorkoutButtons
-) {
-    throw new Error("Required exercise view elements not found");
-}
-
 /** @type {DOMElements} */
 const elements = {
     menuToggle,
@@ -323,10 +295,10 @@ function showView(path) {
         section === VIEWS.WORKOUTS
             ? VIEWS.WORKOUTS
             : section === VIEWS.WEEKLY_PLAN
-                ? VIEWS.WEEKLY_PLAN
-                : section === VIEWS.EXERCISE
-                    ? VIEWS.EXERCISE
-                    : DEFAULT_VIEW;
+              ? VIEWS.WEEKLY_PLAN
+              : section === VIEWS.EXERCISE
+                ? VIEWS.EXERCISE
+                : DEFAULT_VIEW;
 
     const viewElement = document.getElementById(viewId);
     if (viewElement) {
@@ -410,145 +382,7 @@ function populateWeeklyView() {
     );
 }
 
-/**
- * @param {import("./data/workout.js").Workout} workout
- */
-function initializeWorkout(workout) {
-    activeWorkout = {
-        startTime: Date.now(),
-        endTime: 0, // Will be set when workout is completed
-        workout: workout,
-        exercises: workout.exercises.map((exercise) => ({
-            exercise,
-            completedSets: [],
-        })),
-        currentExerciseIndex: 0,
-    };
-    renderActiveWorkout();
-}
-
-/** @type {number | null} */
-let currentSetStartTime = null;
-
-function renderActiveWorkout() {
-    if (!activeWorkout) return alert("No active workout");
-
-    const currentExercise =
-        activeWorkout.exercises[activeWorkout.currentExerciseIndex];
-    if (!currentExercise)
-        return alert(
-            `Invalid index ${activeWorkout.currentExerciseIndex}. ${activeWorkout.exercises.length} exercises available`,
-        );
-
-    // Update exercise title and progress
-    elements.exerciseTitle.textContent = currentExercise.exercise.name;
-
-    const setRange = formatRange(currentExercise.exercise.sets);
-    elements.exerciseProgress.textContent = `Set ${currentExercise.completedSets.length + 1
-        } of ${setRange}`;
-
-    // Update exercise info
-    elements.exerciseTargetReps.textContent = `Target: ${formatRange(
-        currentExercise.exercise.reps,
-    )} reps`;
-
-    if (currentExercise.exercise.notes) {
-        elements.exerciseNotes.innerHTML = `ℹ <span>${currentExercise.exercise.notes}</span>`;
-        elements.exerciseNotes.classList.remove("hidden");
-    } else {
-        elements.exerciseNotes.classList.add("hidden");
-    }
-
-    // Reset form and buttons
-    // Store the current weight before resetting
-    const currentWeight = elements.exerciseWeightInput.value;
-    elements.exerciseForm.reset();
-
-    // Restore the weight value after reset
-    elements.exerciseWeightInput.value = currentWeight;
-    elements.exerciseRepsInput.value =
-        currentExercise.exercise.reps.min.toString();
-
-    elements.exerciseStartButton.disabled = false;
-    elements.exerciseCompleteButton.disabled = true;
-
-    // Update completed sets
-    elements.exerciseSetsList.innerHTML = "";
-
-    currentExercise.completedSets.forEach((set, index) => {
-        const li = document.createElement("li");
-        li.className = "set-item";
-        const duration = ((set.endTime - set.startTime) / 1000).toFixed(1);
-        li.textContent = `Set ${index + 1}: ${set.reps} reps @ ${set.weight
-            }kg (${duration}s)`;
-        elements.exerciseSetsList.appendChild(li);
-    });
-
-    // Update navigation buttons
-    elements.exercisePrevButton.disabled =
-        activeWorkout.currentExerciseIndex === 0;
-    elements.exerciseNextButton.disabled =
-        activeWorkout.currentExerciseIndex ===
-        activeWorkout.exercises.length - 1;
-}
-
-function handleStartSet() {
-    currentSetStartTime = Date.now();
-    elements.exerciseStartButton.disabled = true;
-    elements.exerciseCompleteButton.disabled = false;
-}
-
-/**
- * @param {SubmitEvent} event
- */
-function handleSetCompletion(event) {
-    event.preventDefault();
-
-    assertDefined(activeWorkout, "activeWorkout");
-    assertDefined(currentSetStartTime, "currentSetStartTime");
-
-    const currentExercise =
-        activeWorkout.exercises[activeWorkout.currentExerciseIndex];
-    assertDefined(currentExercise, "currentExercise");
-
-    const form = event.target;
-    if (!(form instanceof HTMLFormElement)) return;
-
-    const repsInput = form.querySelector("#reps-completed");
-    assertDefined(repsInput, "repsInput");
-    if (!(repsInput instanceof HTMLInputElement)) return;
-
-    const weightInput = form.querySelector("#weight-used");
-    assertDefined(weightInput, "weightInput");
-    if (!(weightInput instanceof HTMLInputElement)) return;
-
-    const reps = parseInt(repsInput.value);
-    const weight = parseFloat(weightInput.value);
-    const endTime = Date.now();
-
-    currentExercise.completedSets.push({
-        reps,
-        weight,
-        startTime: currentSetStartTime,
-        endTime,
-    });
-
-    currentSetStartTime = null;
-    renderActiveWorkout();
-}
-
-/**
- * @param {number} direction
- */
-function navigateExercise(direction) {
-    if (!activeWorkout) return;
-    const newIndex = activeWorkout.currentExerciseIndex + direction;
-    if (newIndex >= 0 && newIndex < activeWorkout.exercises.length) {
-        activeWorkout.currentExerciseIndex = newIndex;
-        renderActiveWorkout();
-    }
-}
-
+const exerciseRoot = createRoot(elements.exerciseView);
 /**
  * @param {import("./data/workout.js").Workout[]} workouts
  */
@@ -556,28 +390,14 @@ function showExerciseView(workouts) {
     const dayOfWeek = new Date().toLocaleDateString("en-US", {
         weekday: "long",
     });
-    const lowerDayOfWeek = dayOfWeek.toLowerCase();
-    if (!isValidDay(lowerDayOfWeek)) {
+    const day = Day.fromString(dayOfWeek);
+    if (!day) {
         throw new Error(`Invalid day: ${lowerDayOfWeek}`);
     }
 
-    const workout = workouts.find((w) => w.name === weeklyPlan[lowerDayOfWeek]);
-    if (!workout) {
-        elements.exerciseErrorState.classList.remove("hidden");
-        return;
-    }
-
-    elements.exerciseHeaderTitle.textContent = `${dayOfWeek}'s Workout`;
-    elements.exerciseWorkoutName.textContent = workout.name;
-    elements.exerciseErrorState.classList.add("hidden");
-
-    // Show pre-workout view with workout details
-    elements.exercisePreWorkoutView.classList.remove("hidden");
-    elements.exerciseActiveView.classList.add("hidden");
-
-    // Populate workout preview
-    elements.exerciseWorkoutPreview.innerHTML = "";
-    elements.exerciseWorkoutPreview.appendChild(createWorkoutSection(workout));
+    exerciseRoot.render(
+        JsxRuntime.jsx(DailyWorkout, { day, weeklyPlan, workouts }),
+    );
 }
 
 // Event listeners setup
@@ -598,40 +418,6 @@ function setupEventListeners() {
         const hash = window.location.hash.substring(1) || DEFAULT_VIEW;
         showView(hash);
     });
-
-    // Bind start workout buttons
-    elements.exerciseStartWorkoutButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-            elements.exercisePreWorkoutView.classList.add("hidden");
-            elements.exerciseActiveView.classList.remove("hidden");
-
-            // Get current workout
-            const dayOfWeek = new Date().toLocaleDateString("en-US", {
-                weekday: "long",
-            });
-            const lowerDayOfWeek =
-                /** @type {keyof import("./components/weekly-plan/weekly-plan.js").WeeklyPlan} */ (
-                    dayOfWeek.toLowerCase()
-                );
-            assertDefined(workoutsCache, "workoutsCache");
-            const workout = workoutsCache.find(
-                (w) => w.name === weeklyPlan[lowerDayOfWeek],
-            );
-            assertDefined(workout, "workout");
-
-            initializeWorkout(workout);
-        });
-    });
-
-    // Bind active workout form and navigation
-    elements.exerciseForm.addEventListener("submit", handleSetCompletion);
-    elements.exerciseStartButton.addEventListener("click", handleStartSet);
-    elements.exercisePrevButton.addEventListener("click", () =>
-        navigateExercise(-1),
-    );
-    elements.exerciseNextButton.addEventListener("click", () =>
-        navigateExercise(1),
-    );
 }
 
 // Fetch workouts data
@@ -688,15 +474,4 @@ function assertDefined(value, name) {
     if (value === undefined || value === null) {
         throw new Error(`${name || "Value"} is not defined`);
     }
-}
-
-/**
- * @param {import("./data/workout.js").Workout} workout
- * @returns {HTMLElement}
- */
-function createWorkoutSection(workout) {
-    const container = document.createElement("div");
-    const root = createRoot(container);
-    root.render(JsxRuntime.jsx(WorkoutSection, { workout }));
-    return container;
 }
