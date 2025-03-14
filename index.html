@@ -35,70 +35,7 @@
     </header>
 
     <main>
-        <div id="exercise" class="view" aria-live="polite">
-            <div class="today-header">
-                <h2></h2>
-                <div class="today-workout-info">
-                    <p class="workout-name"></p>
-                </div>
-            </div>
-
-            <div class="pre-workout-view">
-                <button class="start-workout-button">Start Workout</button>
-                <div class="workout-preview"></div>
-                <button class="start-workout-button">Start Workout</button>
-            </div>
-
-            <div class="exercise-container active-exercise hidden">
-                <div class="active-exercise-header">
-                    <h3 class="active-exercise-title"></h3>
-                    <div class="exercise-progress"></div>
-                </div>
-
-                <div class="active-exercise-info">
-                    <p class="target-reps"></p>
-                    <p class="active-exercise-notes"></p>
-                </div>
-
-                <form class="set-completion-form">
-                    <div class="form-group">
-                        <label for="reps-completed">Reps</label>
-                        <input type="number" id="reps-completed" name="reps" min="1" required
-                            placeholder="Number of reps" />
-                    </div>
-                    <div class="form-group">
-                        <label for="weight-used">Weight (kg)</label>
-                        <input type="number" id="weight-used" name="weight" min="0" step="0.5" required
-                            placeholder="Weight (kg)" />
-                    </div>
-                    <div class="set-buttons">
-                        <button type="button" id="start-set">
-                            Start Set
-                        </button>
-                        <button type="submit" id="complete-set" disabled>
-                            Complete Set
-                        </button>
-                    </div>
-                </form>
-
-                <div class="completed-sets">
-                    <h4 class="sets-title">Completed Sets</h4>
-                    <ul class="sets-list"></ul>
-                </div>
-
-                <div class="exercise-controls">
-                    <button type="button" class="prev-exercise">
-                        Previous Exercise
-                    </button>
-                    <button type="button" class="next-exercise">
-                        Next Exercise
-                    </button>
-                </div>
-            </div>
-            <div class="error-state hidden">
-                <p>No workout scheduled for today.</p>
-            </div>
-        </div>
+        <div id="exercise" class="view" aria-live="polite"></div>
 
         <div id="workouts" class="view" aria-live="polite"></div>
 
