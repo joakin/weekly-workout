@@ -2,26 +2,9 @@
 
 module DayCard = {
   @react.component
-  let make = (~day: WeeklyPlan.day, ~workout: option<string>) => {
-    let dayName = switch day {
-    | Monday => "Monday"
-    | Tuesday => "Tuesday"
-    | Wednesday => "Wednesday"
-    | Thursday => "Thursday"
-    | Friday => "Friday"
-    | Saturday => "Saturday"
-    | Sunday => "Sunday"
-    }
-
-    let dayPath = switch day {
-    | Monday => "monday"
-    | Tuesday => "tuesday"
-    | Wednesday => "wednesday"
-    | Thursday => "thursday"
-    | Friday => "friday"
-    | Saturday => "saturday"
-    | Sunday => "sunday"
-    }
+  let make = (~day: WeeklyPlan.Day.t, ~workout: option<string>) => {
+    let dayName = day->WeeklyPlan.Day.toString
+    let dayPath = dayName->String.toLowerCase
 
     let workoutName = switch workout {
     | Some(name) => name

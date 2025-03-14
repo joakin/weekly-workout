@@ -3,13 +3,15 @@ import { createRoot } from "react-dom/client";
 import { make as WorkoutSection } from "./components/workout-section/WorkoutSection.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 import { make as Workouts } from "./components/workouts/Workouts.res.mjs";
-import { make as WeeklyPlan } from "./components/weekly-plan-grid/WeeklyPlanGrid.res.mjs";
+import { make as WeeklyPlanGrid } from "./components/weekly-plan-grid/WeeklyPlanGrid.res.mjs";
+import { make as DayWorkout } from "./components/day-workout/DayWorkout.res.mjs";
+import { Day } from "./data/WeeklyPlan.res.mjs";
 
 if (process.env.NODE_ENV === "development") {
     // Add live reload for development
     // This will automatically reload the page when files are changed
     new EventSource("/esbuild").addEventListener("change", () =>
-        location.reload()
+        location.reload(),
     );
 }
 
@@ -59,8 +61,6 @@ import { formatRange } from "./data/number-range.js";
  * @property {NodeListOf<HTMLElement>} views
  * @property {NodeListOf<HTMLElement>} weeklyPlanDayCards
  * @property {HTMLElement} dayWorkoutView
- * @property {HTMLElement} backButton
- * @property {HTMLElement} workoutContainer
  * @property {HTMLElement} weeklyPlanGrid
  * @property {HTMLElement} workoutsContainer
  * @property {HTMLElement} exerciseView
@@ -83,9 +83,6 @@ import { formatRange } from "./data/number-range.js";
  * @property {HTMLElement} exerciseHeaderTitle
  * @property {HTMLElement} exerciseWorkoutName
  * @property {NodeListOf<HTMLButtonElement>} exerciseStartWorkoutButtons
- * @property {HTMLElement} dayWorkoutTitle
- * @property {HTMLElement} dayWorkoutType
- * @property {HTMLTemplateElement} weeklyPlanDayCardTemplate
  */
 
 // Constants
@@ -135,12 +132,6 @@ const navMenu = /** @type {HTMLElement} */ (
 const dayWorkoutView = /** @type {HTMLElement} */ (
     document.getElementById("day-workout")
 );
-const backButton = /** @type {HTMLElement} */ (
-    document.querySelector(".back-button")
-);
-const workoutContainer = /** @type {HTMLElement} */ (
-    document.querySelector(".workout-container")
-);
 const weeklyPlanGrid = /** @type {HTMLElement} */ (
     document.querySelector(".weekly-plan")
 );
@@ -155,8 +146,6 @@ if (
     !menuToggle ||
     !navMenu ||
     !dayWorkoutView ||
-    !backButton ||
-    !workoutContainer ||
     !weeklyPlanGrid ||
     !workoutsContainer ||
     !exerciseView
@@ -224,17 +213,6 @@ const exerciseStartWorkoutButtons =
         exerciseView.querySelectorAll(".start-workout-button")
     );
 
-// Day workout elements
-const dayWorkoutTitle = /** @type {HTMLElement} */ (
-    dayWorkoutView.querySelector(".day-title h2")
-);
-const dayWorkoutType = /** @type {HTMLElement} */ (
-    dayWorkoutView.querySelector(".day-title p")
-);
-const weeklyPlanDayCardTemplate = /** @type {HTMLTemplateElement} */ (
-    document.getElementById("weekly-plan-day-card-template")
-);
-
 if (
     !exerciseTitle ||
     !exerciseProgress ||
@@ -254,9 +232,7 @@ if (
     !exerciseErrorState ||
     !exerciseHeaderTitle ||
     !exerciseWorkoutName ||
-    !dayWorkoutTitle ||
-    !dayWorkoutType ||
-    !weeklyPlanDayCardTemplate
+    !exerciseStartWorkoutButtons
 ) {
     throw new Error("Required exercise view elements not found");
 }
@@ -275,8 +251,6 @@ const elements = {
         document.querySelectorAll(".weekly-plan .day-card")
     ),
     dayWorkoutView,
-    backButton,
-    workoutContainer,
     weeklyPlanGrid,
     workoutsContainer,
     exerciseView,
@@ -299,9 +273,6 @@ const elements = {
     exerciseHeaderTitle,
     exerciseWorkoutName,
     exerciseStartWorkoutButtons,
-    dayWorkoutTitle,
-    dayWorkoutType,
-    weeklyPlanDayCardTemplate,
 };
 
 // Utility functions
@@ -352,10 +323,10 @@ function showView(path) {
         section === VIEWS.WORKOUTS
             ? VIEWS.WORKOUTS
             : section === VIEWS.WEEKLY_PLAN
-            ? VIEWS.WEEKLY_PLAN
-            : section === VIEWS.EXERCISE
-            ? VIEWS.EXERCISE
-            : DEFAULT_VIEW;
+                ? VIEWS.WEEKLY_PLAN
+                : section === VIEWS.EXERCISE
+                    ? VIEWS.EXERCISE
+                    : DEFAULT_VIEW;
 
     const viewElement = document.getElementById(viewId);
     if (viewElement) {
@@ -367,8 +338,8 @@ function showView(path) {
         } else if (viewId === VIEWS.WEEKLY_PLAN) {
             if (param) {
                 // Type guard to ensure param is a valid day
-                if (isValidDay(param) && weeklyPlan[param]) {
-                    showDayWorkout(param, workoutsCache);
+                if (isValidDay(param)) {
+                    if (weeklyPlan[param]) showDayWorkout(param, workoutsCache);
                 } else {
                     console.error(`Invalid day: ${param}`);
                 }
@@ -403,26 +374,24 @@ function isValidDay(day) {
     return day in weeklyPlan;
 }
 
+const dayWorkoutRoot = createRoot(elements.dayWorkoutView);
 /** @type {(day: keyof import("./components/weekly-plan/weekly-plan.js").WeeklyPlan, workouts: import("./data/workout.js").Workout[]) => void} */
-function showDayWorkout(day, workouts) {
-    const workoutName = weeklyPlan[day];
+function showDayWorkout(dayStr, workouts) {
+    const day = Day.fromString(dayStr);
+    if (!day) return;
+    const workoutName = weeklyPlan[day.toLowerCase()];
     if (!workoutName) return;
 
     utils.toggleVisibility(elements.weeklyPlanGrid, false);
     elements.dayWorkoutView.classList.remove("hidden");
 
-    const dayTitle = /** @type {HTMLElement | null} */ (
-        elements.dayWorkoutView.querySelector(".day-title h2")
+    dayWorkoutRoot.render(
+        JsxRuntime.jsx(DayWorkout, {
+            day: Day.fromString(day),
+            workoutName,
+            workouts,
+        }),
     );
-    const workoutType = /** @type {HTMLElement | null} */ (
-        elements.dayWorkoutView.querySelector(".day-title p")
-    );
-    if (dayTitle && workoutType) {
-        utils.setElementText(dayTitle, utils.capitalizeFirstLetter(day));
-        utils.setElementText(workoutType, workoutName);
-    }
-
-    loadWorkout(workoutName, workouts);
 }
 
 /** @type {() => void} */
@@ -431,24 +400,13 @@ function showWeekView() {
     elements.dayWorkoutView.classList.add("hidden");
 }
 
-/** @type {(workoutName: string, workouts: import("./data/workout.js").Workout[]) => void} */
-function loadWorkout(workoutName, workouts) {
-    const workout = workouts.find((w) => w.name === workoutName);
-    if (workout) {
-        elements.workoutContainer.innerHTML = "";
-        elements.workoutContainer.appendChild(createWorkoutSection(workout));
-    } else {
-        elements.workoutContainer.innerHTML = "<p>Workout not found.</p>";
-    }
-}
-
 /** @type {() => void} */
 function populateWeeklyView() {
     const root = createRoot(elements.weeklyPlanGrid);
     root.render(
-        JsxRuntime.jsx(WeeklyPlan, {
+        JsxRuntime.jsx(WeeklyPlanGrid, {
             weeklyPlan,
-        })
+        }),
     );
 }
 
@@ -479,20 +437,19 @@ function renderActiveWorkout() {
         activeWorkout.exercises[activeWorkout.currentExerciseIndex];
     if (!currentExercise)
         return alert(
-            `Invalid index ${activeWorkout.currentExerciseIndex}. ${activeWorkout.exercises.length} exercises available`
+            `Invalid index ${activeWorkout.currentExerciseIndex}. ${activeWorkout.exercises.length} exercises available`,
         );
 
     // Update exercise title and progress
     elements.exerciseTitle.textContent = currentExercise.exercise.name;
 
     const setRange = formatRange(currentExercise.exercise.sets);
-    elements.exerciseProgress.textContent = `Set ${
-        currentExercise.completedSets.length + 1
-    } of ${setRange}`;
+    elements.exerciseProgress.textContent = `Set ${currentExercise.completedSets.length + 1
+        } of ${setRange}`;
 
     // Update exercise info
     elements.exerciseTargetReps.textContent = `Target: ${formatRange(
-        currentExercise.exercise.reps
+        currentExercise.exercise.reps,
     )} reps`;
 
     if (currentExercise.exercise.notes) {
@@ -522,9 +479,8 @@ function renderActiveWorkout() {
         const li = document.createElement("li");
         li.className = "set-item";
         const duration = ((set.endTime - set.startTime) / 1000).toFixed(1);
-        li.textContent = `Set ${index + 1}: ${set.reps} reps @ ${
-            set.weight
-        }kg (${duration}s)`;
+        li.textContent = `Set ${index + 1}: ${set.reps} reps @ ${set.weight
+            }kg (${duration}s)`;
         elements.exerciseSetsList.appendChild(li);
     });
 
@@ -637,11 +593,6 @@ function setupEventListeners() {
         });
     });
 
-    elements.backButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        window.location.hash = ROUTES.WEEKLY_PLAN;
-    });
-
     // Listen for route changes
     window.addEventListener("hashchange", () => {
         const hash = window.location.hash.substring(1) || DEFAULT_VIEW;
@@ -664,7 +615,7 @@ function setupEventListeners() {
                 );
             assertDefined(workoutsCache, "workoutsCache");
             const workout = workoutsCache.find(
-                (w) => w.name === weeklyPlan[lowerDayOfWeek]
+                (w) => w.name === weeklyPlan[lowerDayOfWeek],
             );
             assertDefined(workout, "workout");
 
@@ -676,10 +627,10 @@ function setupEventListeners() {
     elements.exerciseForm.addEventListener("submit", handleSetCompletion);
     elements.exerciseStartButton.addEventListener("click", handleStartSet);
     elements.exercisePrevButton.addEventListener("click", () =>
-        navigateExercise(-1)
+        navigateExercise(-1),
     );
     elements.exerciseNextButton.addEventListener("click", () =>
-        navigateExercise(1)
+        navigateExercise(1),
     );
 }
 

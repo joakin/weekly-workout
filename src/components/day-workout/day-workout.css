@@ -1,0 +1,56 @@
+.day-workout {
+    padding: var(--spacing-xl);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.day-workout .day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.day-workout .day-title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.day-workout .day-title h2 {
+    font-size: var(--font-size-xl);
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.day-workout .day-title p {
+    color: var(--text-color);
+    font-size: var(--font-size-base);
+    opacity: 0.8;
+}
+
+.day-workout .back-button {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--section-bg);
+    border: none;
+    border-radius: var(--spacing-xs);
+    color: var(--primary-color);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    text-decoration: none;
+}
+
+.day-workout .back-button:hover {
+    background: var(--border-color);
+}
+
+@media (max-width: 640px) {
+    .day-workout {
+        padding: var(--spacing-md);
+    }
+}

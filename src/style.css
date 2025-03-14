@@ -37,8 +37,16 @@
 }
 
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        sans-serif;
     line-height: 1.5;
     color: var(--text-color);
     background-color: var(--background-color);
@@ -148,52 +156,6 @@ nav {
     display: block;
 }
 
-/* Day Header */
-.day-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--spacing-xl);
-    padding-bottom: var(--spacing-md);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.day-title {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
-}
-
-.day-title h2 {
-    font-size: var(--font-size-xl);
-    color: var(--primary-color);
-    margin: 0;
-}
-
-.day-title p {
-    color: var(--text-color);
-    font-size: var(--font-size-base);
-    opacity: 0.8;
-}
-
-/* Buttons */
-.back-button {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--spacing-sm) var(--spacing-md);
-    background: var(--section-bg);
-    border: none;
-    border-radius: var(--spacing-xs);
-    color: var(--primary-color);
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
-}
-
-.back-button:hover {
-    background: var(--border-color);
-}
-
 /* Workout sections */
 .workout-section {
     background: var(--section-bg);
@@ -227,7 +189,8 @@ nav {
     #menu-toggle {
         display: flex;
         position: absolute;
-        top: -2.75rem; /* Adjusted to align with the more compact header */
+        /* Adjusted to align with the more compact header */
+        top: -2.75rem;
         right: 0;
     }
 
@@ -298,34 +261,6 @@ nav {
     padding: var(--spacing-lg);
     box-shadow: var(--shadow-sm);
     margin-top: var(--spacing-xl);
-}
-
-/* Weekly Plan View */
-#weekly-plan .day-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--spacing-xl);
-    padding-bottom: var(--spacing-md);
-    border-bottom: 1px solid var(--border-color);
-}
-
-#weekly-plan .day-title {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
-}
-
-#weekly-plan .day-title h2 {
-    font-size: var(--font-size-xl);
-    color: var(--primary-color);
-    margin: 0;
-}
-
-#weekly-plan .day-title p {
-    color: var(--text-color);
-    font-size: var(--font-size-base);
-    opacity: 0.8;
 }
 
 /* Active Exercise */
