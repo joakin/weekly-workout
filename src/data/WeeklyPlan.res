@@ -32,6 +32,18 @@ module Day = {
     | Sunday => "Sunday"
     }
   }
+
+  let today = () => {
+    let dayOfWeek: string = %raw(`
+      new Date().toLocaleDateString("en-US", {
+        weekday: "long",
+      })
+    `)
+    switch fromString(dayOfWeek) {
+    | Some(day) => day
+    | None => panic(`Invalid day of the week ${dayOfWeek}`)
+    }
+  }
 }
 
 type t = {
