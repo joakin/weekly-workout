@@ -4,8 +4,10 @@
     "version": "0.1.0",
     "type": "module",
     "scripts": {
-        "dev": "node scripts/build.js preview --watch",
-        "build": "node scripts/build.js production",
+        "dev": "run-pty % npm run res:dev % npm run bundle:dev",
+        "build": "npm run res:build && npm run bundle:build",
+        "bundle:dev": "node scripts/build.js preview --watch",
+        "bundle:build": "node scripts/build.js production",
         "res:build": "rescript",
         "res:dev": "rescript build -w",
         "res:clean": "rescript clean"
@@ -19,6 +21,7 @@
     },
     "devDependencies": {
         "esbuild": "^0.25.1",
-        "prettier": "^3.5.3"
+        "prettier": "^3.5.3",
+        "run-pty": "^5.0.0"
     }
 }
