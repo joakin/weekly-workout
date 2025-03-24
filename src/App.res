@@ -29,7 +29,7 @@ module Loaded = {
         ("Exercise", Route.Exercise),
       ]
       ->Array.map(((label, route)) => {
-        let isActive = route === activeRoute
+        let isActive = Route.isActive(~route, ~activeRoute)
         let className = isActive ? "active" : ""
         let href = Route.toHash(route)
 
