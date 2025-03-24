@@ -24,10 +24,13 @@ let update = (state: state, msg: msg, dispatch: msg => unit) => {
   }
 }
 
-let program = Elm.Program.make(initialState, update)
+let program = Tea.Program.make(initialState, update)
 
 let context = React.createContext(program)
 
 module Provider = {
   let make = React.Context.provider(context)
 }
+
+let useState = Tea.useState(context, _)
+let useDispatch = () => Tea.useDispatch(context)

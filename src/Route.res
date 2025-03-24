@@ -42,3 +42,26 @@ let toString = (route: t): string => {
 }
 
 let toHash = (route: t): string => "#" ++ toString(route)
+
+/**
+ * Checks if the `route` is *active* based on the full `activeRoute`.
+ *
+ * Useful for highlighting navigation items for example.
+ */
+let isActive = (~route: t, ~activeRoute: t): bool =>
+  switch (route, activeRoute) {
+  | (WeeklyPlan, WeeklyPlan | WeeklyPlanDay(_)) => true
+
+  | (Workouts, Workouts) => true
+
+  | (Exercise, Exercise) => true
+
+  | (
+      WeeklyPlan
+      | WeeklyPlanDay(_)
+      | Workouts
+      | Exercise
+      | NotFound(_),
+      _,
+    ) => false
+  }

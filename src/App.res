@@ -77,7 +77,7 @@ module Loaded = {
 
 @react.component
 let make = () => {
-  let state = Elm.useState(State.context, state => state)
+  let state = State.useState(state => state)
 
   switch state {
   | State.Loading => React.null
