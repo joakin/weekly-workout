@@ -3,8 +3,7 @@
 module Loaded = {
   @react.component
   let make = (~workouts: array<Workout.t>) => {
-    let (hash, setHash) = Hooks.useHash()
-    let activeRoute = Route.fromHash(hash)
+    let activeRoute = Hooks.useRoute()
 
     let today = WeeklyPlan.Day.today()
     let weeklyPlan: WeeklyPlan.t = {
@@ -43,7 +42,9 @@ module Loaded = {
 
     <>
       <header>
-        <h1 onClick={_ => setHash("/")}> {React.string("Weekly Workout")} </h1>
+        <h1 onClick={_ => Route.navigate(Route.defaultRoute)}>
+          {React.string("Weekly Workout")}
+        </h1>
         <nav ariaLabel="Main navigation">
           <button
             id="menu-toggle"

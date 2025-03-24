@@ -43,6 +43,10 @@ let toString = (route: t): string => {
 
 let toHash = (route: t): string => "#" ++ toString(route)
 
+let navigate = (route: t) => {
+  window->Web.location->Web.setHash(toHash(route))
+}
+
 /**
  * Checks if the `route` is *active* based on the full `activeRoute`.
  *
