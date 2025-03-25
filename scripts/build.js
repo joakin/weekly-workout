@@ -4,6 +4,7 @@ const isProduction = process.argv.includes("production");
 const isPreview = process.argv.includes("preview");
 const watch = process.argv.includes("--watch") || process.argv.includes("-w");
 
+/** @type {import("esbuild").BuildOptions} */
 const commonConfig = {
     entryPoints: ["src/index.js"],
     bundle: true,
@@ -14,11 +15,9 @@ const commonConfig = {
         ".jsx": "jsx",
     },
     define: {
-        "process.env.NODE_ENV": `"${
-            isProduction ? "production" : "development"
-        }"`,
+        "process.env.NODE_ENV": `"${isProduction ? "production" : "development"}"`,
     },
-    sourcemap: !isProduction,
+    sourcemap: true,
     minify: isProduction,
 };
 
