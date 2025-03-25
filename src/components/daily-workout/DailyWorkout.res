@@ -1,4 +1,32 @@
-%%raw("import './daily-workout.css'")
+type styles = {
+  view: string,
+  pre_workout_view: string,
+  workout_preview: string,
+  start_workout_button: string,
+  today_header: string,
+  workout_info: string,
+  active_exercise: string,
+  active_exercise_header: string,
+  active_exercise_title: string,
+  exercise_progress: string,
+  active_exercise_info: string,
+  target_reps: string,
+  active_exercise_notes: string,
+  set_completion_form: string,
+  form_group: string,
+  set_buttons: string,
+  completed_sets: string,
+  sets_title: string,
+  sets_list: string,
+  set_item: string,
+  start_set: string,
+  complete_set: string,
+  exercise_controls: string,
+  prev_exercise: string,
+  next_exercise: string,
+  error_state: string,
+}
+@module external styles: styles = "./daily-workout.module.css"
 
 module ActiveWorkout = {
   type currentSetStatus =
@@ -115,29 +143,29 @@ module ActiveWorkout = {
       let sets = NumberRange.formatRange(exercise.exercise.sets)
       let reps = NumberRange.formatRange(exercise.exercise.reps)
 
-      <div className="exercise-container active-exercise">
-        <div className="active-exercise-header">
-          <h3 className="active-exercise-title"> {React.string(exercise.exercise.name)} </h3>
-          <div className="exercise-progress">
+      <div className=styles.active_exercise>
+        <div className=styles.active_exercise_header>
+          <h3 className=styles.active_exercise_title> {React.string(exercise.exercise.name)} </h3>
+          <div className=styles.exercise_progress>
             {
               let set = (exercise.completedSets->Array.length + 1)->Int.toString
               React.string(`Set ${set} of ${sets}`)
             }
           </div>
         </div>
-        <div className="active-exercise-info">
-          <p className="target-reps"> {React.string(`Target: ${reps} reps`)} </p>
+        <div className=styles.active_exercise_info>
+          <p className=styles.target_reps> {React.string(`Target: ${reps} reps`)} </p>
           {switch exercise.exercise.notes {
           | Some(notes) =>
-            <p className="active-exercise-notes">
+            <p className=styles.active_exercise_notes>
               {React.string("ℹ ")}
               <span> {React.string(notes)} </span>
             </p>
           | None => React.null
           }}
         </div>
-        <form className="set-completion-form">
-          <div className="form-group">
+        <form className=styles.set_completion_form>
+          <div className=styles.form_group>
             <label htmlFor="reps-completed"> {React.string("Reps")} </label>
             <input
               type_="number"
@@ -153,7 +181,7 @@ module ActiveWorkout = {
                 ->Option.forEach(i => send(RepsChanged(i)))}
             />
           </div>
-          <div className="form-group">
+          <div className=styles.form_group>
             <label htmlFor="weight-used"> {React.string("Weight (kg)")} </label>
             <input
               type_="number"
@@ -170,10 +198,11 @@ module ActiveWorkout = {
                 ->Option.forEach(f => send(WeightChanged(f)))}
             />
           </div>
-          <div className="set-buttons">
+          <div className=styles.set_buttons>
             <button
               type_="button"
               id="start-set"
+              className=styles.start_set
               disabled={state.currentSetStatus == InProgress}
               onClick={_ => send(StartSet)}>
               {React.string("Start Set")}
@@ -181,15 +210,16 @@ module ActiveWorkout = {
             <button
               type_="submit"
               id="complete-set"
+              className=styles.complete_set
               disabled={state.currentSetStatus == NotStarted}
               onClick={_ => send(EndSet)}>
               {React.string("Complete Set")}
             </button>
           </div>
         </form>
-        <div className="completed-sets">
-          <h4 className="sets-title"> {React.string("Completed Sets")} </h4>
-          <ul className="sets-list">
+        <div className=styles.completed_sets>
+          <h4 className=styles.sets_title> {React.string("Completed Sets")} </h4>
+          <ul className=styles.sets_list>
             {React.array(
               exercise.completedSets->Array.mapWithIndex((set, index) => {
                 let duration = ((set.endTime -. set.startTime) /. 1000.)->Float.toFixed(~digits=1)
@@ -197,22 +227,22 @@ module ActiveWorkout = {
                 let reps = set.reps->Int.toString
                 let weight = set.weight->Float.toFixed(~digits=1)
                 let text = `Set ${num}: ${reps} reps @ ${weight}kg (${duration}s)`
-                <li className="set-item" key={num}> {React.string(text)} </li>
+                <li className=styles.set_item key={num}> {React.string(text)} </li>
               }),
             )}
           </ul>
         </div>
-        <div className="exercise-controls">
+        <div className=styles.exercise_controls>
           <button
             type_="button"
-            className="prev-exercise"
+            className=styles.prev_exercise
             disabled={state.currentExerciseIndex == 0}
             onClick={_ => send(PreviousExercise)}>
             {React.string("Previous Exercise")}
           </button>
           <button
             type_="button"
-            className="next-exercise"
+            className=styles.next_exercise
             disabled={state.currentExerciseIndex == workout.exercises->Array.length - 1}
             onClick={_ => send(NextExercise)}>
             {React.string("Next Exercise")}
@@ -221,7 +251,7 @@ module ActiveWorkout = {
       </div>
 
     | None =>
-      <div className="error-state">
+      <div className=styles.error_state>
         <p> {React.string("Exercise not found.")} </p>
       </div>
     }
@@ -249,26 +279,26 @@ let make = (~day: WeeklyPlan.Day.t, ~workouts: array<Workout.t>, ~weeklyPlan: We
 
   let (state, send) = React.useReducer(update, PreWorkout)
 
-  <div className="" id="exercise" ariaLive=#polite>
+  <div className=styles.view ariaLive=#polite>
     {switch workout {
     | Some(workout) =>
       <>
-        <div className="today-header">
+        <div className=styles.today_header>
           <h2> {React.string(`${day->WeeklyPlan.Day.toString}'s Workout`)} </h2>
-          <div className="today-workout-info">
-            <p className="workout-name"> {React.string(workout.name)} </p>
-          </div>
+          <p className=styles.workout_info> {React.string(workout.name)} </p>
         </div>
         {switch state {
         | PreWorkout =>
-          <div className="pre-workout-view">
-            <button className="start-workout-button" onClick={_ => send(StartWorkout(workout))}>
+          <div className=styles.pre_workout_view>
+            <button
+              className=styles.start_workout_button onClick={_ => send(StartWorkout(workout))}>
               {React.string("Start Workout")}
             </button>
-            <div className="workout-preview">
+            <div className=styles.workout_preview>
               <WorkoutSection workout />
             </div>
-            <button className="start-workout-button" onClick={_ => send(StartWorkout(workout))}>
+            <button
+              className=styles.start_workout_button onClick={_ => send(StartWorkout(workout))}>
               {React.string("Start Workout")}
             </button>
           </div>
@@ -278,7 +308,7 @@ let make = (~day: WeeklyPlan.Day.t, ~workouts: array<Workout.t>, ~weeklyPlan: We
       </>
 
     | None =>
-      <div className="error-state">
+      <div className=styles.error_state>
         <p> {React.string("No workout scheduled for today.")} </p>
       </div>
     }}
