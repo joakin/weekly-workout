@@ -29,18 +29,28 @@
     --font-size-xl: 1.75rem;
     --font-size-2xl: 2.5rem;
 
-    /* Font family */
     --font-family:
         "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
         "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
         "Helvetica Neue", sans-serif;
+    --line-height: 1.5;
 }
 
 /* Base styles */
+
+html {
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 html {
@@ -58,5 +68,6 @@ textarea,
 button {
     font-family: var(--font-family);
     font-size: var(--font-size-base);
+    line-height: var(--line-height);
     color: var(--text-color);
 }
