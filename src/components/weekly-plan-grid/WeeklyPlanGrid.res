@@ -1,8 +1,6 @@
 type styles = {grid: string, card: string, link: string}
 @module external styles: styles = "./weekly-plan-grid.module.css"
 
-Console.log(styles)
-
 module DayCard = {
   @react.component
   let make = (~day: WeeklyPlan.Day.t, ~workout: option<string>) => {
