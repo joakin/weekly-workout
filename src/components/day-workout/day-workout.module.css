@@ -1,10 +1,10 @@
-.day-workout {
+.day_workout {
     padding: var(--spacing-xl);
     max-width: 800px;
     margin: 0 auto;
 }
 
-.day-workout .day-header {
+.header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -13,25 +13,25 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-.day-workout .day-title {
+.title {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
 }
 
-.day-workout .day-title h2 {
+.title h2 {
     font-size: var(--font-size-xl);
     color: var(--primary-color);
     margin: 0;
 }
 
-.day-workout .day-title p {
+.title p {
     color: var(--text-color);
     font-size: var(--font-size-base);
     opacity: 0.8;
 }
 
-.day-workout .back-button {
+.back_button {
     display: inline-flex;
     align-items: center;
     padding: var(--spacing-sm) var(--spacing-md);
@@ -45,12 +45,12 @@
     text-decoration: none;
 }
 
-.day-workout .back-button:hover {
+.back_button:hover {
     background: var(--border-color);
 }
 
 @media (max-width: 640px) {
-    .day-workout {
+    .day_workout {
         padding: var(--spacing-md);
     }
 }
