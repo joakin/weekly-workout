@@ -1,4 +1,4 @@
-.weekly-plan {
+.grid {
     display: grid;
     gap: var(--spacing-md);
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
@@ -10,26 +10,28 @@
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
-.weekly-plan .day-card {
+.card {
     background: var(--section-bg);
     border-radius: var(--spacing-sm);
     padding: var(--spacing-lg);
     box-shadow: var(--shadow-sm);
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
     position: relative;
 }
 
-.weekly-plan .day-card:hover {
+.card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
 
-.weekly-plan .day-card.rest {
+.card.rest {
     background-color: var(--section-bg-alt);
 }
 
-.weekly-plan .day-card .day-card-link {
+.link {
     position: absolute;
     top: 0;
     left: 0;
@@ -37,32 +39,32 @@
     bottom: 0;
 }
 
-.weekly-plan .day-card h2 {
+.card h2 {
     font-size: var(--font-size-lg);
     margin-bottom: var(--spacing-sm);
     color: var(--primary-color);
 }
 
-.weekly-plan .day-card p {
+.card p {
     color: var(--text-color);
 }
 
 @media (max-width: 640px) {
-    .weekly-plan {
+    .grid {
         gap: var(--spacing-sm);
         grid-template-columns: 1fr;
         padding: 0 var(--spacing-sm);
     }
 
-    .weekly-plan .day-card {
+    .card {
         padding: var(--spacing-md);
     }
 
-    .weekly-plan .day-card h2 {
+    .card h2 {
         font-size: var(--font-size-base);
     }
 
-    .weekly-plan .day-card p {
+    .card p {
         font-size: var(--font-size-sm);
     }
 }

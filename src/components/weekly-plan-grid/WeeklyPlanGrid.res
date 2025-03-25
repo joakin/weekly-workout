@@ -1,4 +1,7 @@
-%%raw("import './weekly-plan.css';")
+type styles = {grid: string, card: string, link: string}
+@module external styles: styles = "./weekly-plan-grid.module.css"
+
+Console.log(styles)
 
 module DayCard = {
   @react.component
@@ -13,8 +16,8 @@ module DayCard = {
 
     let href = "#/weekly-plan/" ++ dayPath
 
-    <div className={"day-card" ++ (workout == None ? " rest" : "")}>
-      <a href className="day-card-link" />
+    <div className={styles.card ++ (workout == None ? " rest" : "")}>
+      <a href className=styles.link />
       <h2> {React.string(dayName)} </h2>
       <p> {React.string(workoutName)} </p>
     </div>
@@ -23,7 +26,7 @@ module DayCard = {
 
 @react.component
 let make = (~weeklyPlan: WeeklyPlan.t) => {
-  <div className="weekly-plan">
+  <div className=styles.grid>
     <DayCard day=Monday workout={weeklyPlan.monday} />
     <DayCard day=Tuesday workout={weeklyPlan.tuesday} />
     <DayCard day=Wednesday workout={weeklyPlan.wednesday} />

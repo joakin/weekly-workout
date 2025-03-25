@@ -1,18 +1,18 @@
-.workout-section {
+.section {
     background: var(--section-bg);
     border-radius: var(--spacing-sm);
     padding: var(--spacing-lg);
     box-shadow: var(--shadow-sm);
 }
 
-.workout-section h2 {
+.header {
     font-size: var(--font-size-lg);
     margin-bottom: var(--spacing-md);
     color: var(--primary-color);
 }
 
 @media (max-width: 640px) {
-    .workout-section {
+    .section {
         padding: var(--spacing-md);
     }
-} 
+}
