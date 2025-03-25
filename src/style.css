@@ -62,6 +62,12 @@ body {
     padding: var(--spacing-md);
 }
 
+@media (max-width: 640px) {
+    body {
+        padding: var(--spacing-sm);
+    }
+}
+
 body,
 input,
 textarea,

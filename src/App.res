@@ -1,4 +1,12 @@
-%%raw("import './App.css'")
+type styles = {
+  header: string,
+  nav: string,
+  menu_toggle: string,
+  menu_icon: string,
+  nav_menu: string,
+  nav_link: string,
+}
+@module external styles: styles = "./App.module.css"
 
 module Loaded = {
   @react.component
@@ -33,7 +41,11 @@ module Loaded = {
         let href = Route.toHash(route)
 
         <li role="none" key=href>
-          <a href className={"nav-link " ++ className} role="menuitem" onClick={_ => toggleMenu()}>
+          <a
+            href
+            className={styles.nav_link ++ " " ++ className}
+            role="menuitem"
+            onClick={_ => toggleMenu()}>
             {React.string(label)}
           </a>
         </li>
@@ -41,21 +53,25 @@ module Loaded = {
       ->React.array
 
     <>
-      <header>
+      <header className={styles.header}>
         <h1 onClick={_ => Route.navigate(Route.defaultRoute)}>
           {React.string("Weekly Workout")}
         </h1>
-        <nav ariaLabel="Main navigation">
+        <nav className=styles.nav ariaLabel="Main navigation">
           <button
-            id="menu-toggle"
+            className={styles.menu_toggle ++ (menuActive ? " active" : "")}
             ariaLabel="Toggle menu"
             ariaExpanded=false
             ariaControls="nav-menu"
-            className={menuActive ? "active" : ""}
             onClick={_ => toggleMenu()}>
-            <span className="menu-icon" />
+            <span className=styles.menu_icon />
           </button>
-          <ul id="nav-menu" className={menuActive ? "active" : ""} role="menubar"> {menuItems} </ul>
+          <ul
+            id="nav-menu"
+            className={styles.nav_menu ++ (menuActive ? " active" : "")}
+            role="menubar">
+            {menuItems}
+          </ul>
         </nav>
       </header>
       <main>
