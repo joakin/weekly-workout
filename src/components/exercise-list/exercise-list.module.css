@@ -1,40 +1,40 @@
-.exercise-list {
+.list {
     list-style: none;
 }
 
-.exercise-list .exercise-item {
+.item {
     padding: var(--spacing-md);
     border-bottom: 1px solid var(--border-color);
 }
 
-.exercise-list .exercise-item:last-child {
+.item:last-child {
     border-bottom: none;
 }
 
-.exercise-list .exercise-name {
+.name {
     font-weight: 600;
     margin-bottom: var(--spacing-xs);
 }
 
-.exercise-list .exercise-sets {
+.sets {
     font-size: var(--font-size-sm);
     color: var(--text-light);
     margin-bottom: var(--spacing-sm);
 }
 
-.exercise-list .exercise-notes {
+.notes {
     font-size: var(--font-size-sm);
     color: var(--text-muted);
     margin-top: var(--spacing-md);
     padding-left: var(--spacing-sm);
 }
 
-.exercise-list .exercise-notes span {
+.notes span {
     font-style: italic;
 }
 
 /* Superset styles */
-.exercise-list .exercise-item.superset {
+.item.superset {
     margin-left: var(--spacing-md);
     margin-top: var(--spacing-sm);
     padding-left: var(--spacing-md);
@@ -42,8 +42,8 @@
     position: relative;
 }
 
-.exercise-list .exercise-item.superset::before {
-    content: '';
+.item.superset::before {
+    content: "";
     position: absolute;
     left: -2px;
     top: calc(-1 * var(--spacing-sm));
@@ -51,4 +51,4 @@
     height: calc(100% + var(--spacing-md));
     background: var(--primary-color);
     opacity: 0.3;
-} 
+}
