@@ -10,11 +10,25 @@
     border-radius: var(--spacing-sm);
     box-shadow: var(--shadow-sm);
     text-align: center;
+
+    position: relative;
 }
 
 .today_header h2 {
     font-size: var(--font-size-lg);
     margin-bottom: var(--spacing-sm);
+}
+
+.select_prev_workout {
+    position: absolute;
+    top: 50%;
+    left: 0;
+}
+
+.select_next_workout {
+    position: absolute;
+    top: 50%;
+    right: 0;
 }
 
 .workout_info {
@@ -240,6 +254,11 @@
     border-radius: 0.5rem;
     background-color: var(--surface-color);
     padding: 1rem;
+}
+
+.error_state {
+    font-weight: 600;
+    text-align: center;
 }
 
 @media (max-width: 640px) {

@@ -82,7 +82,7 @@ module Loaded = {
             <p> {React.string("No workout scheduled for " ++ day->WeeklyPlan.Day.toString)} </p>
           }
         | Route.Workouts => <Workouts workouts />
-        | Route.Exercise => <DailyWorkout day=today workouts weeklyPlan />
+        | Route.Exercise => <DailyWorkout today workouts weeklyPlan />
         | Route.NotFound(path) => <p> {React.string("Page not found: " ++ path)} </p>
         }}
       </main>

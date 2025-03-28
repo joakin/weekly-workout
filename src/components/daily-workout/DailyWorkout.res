@@ -4,6 +4,8 @@ type styles = {
   workout_preview: string,
   start_workout_button: string,
   today_header: string,
+  select_prev_workout: string,
+  select_next_workout: string,
   workout_info: string,
   active_exercise: string,
   active_exercise_header: string,
@@ -258,59 +260,94 @@ module ActiveWorkout = {
   }
 }
 
-type state =
+type screen =
   | PreWorkout
   | ActiveExercise(Workout.t)
 
-type action = StartWorkout(Workout.t)
+type state = {
+  day: WeeklyPlan.Day.t,
+  weeklyPlan: WeeklyPlan.t,
+  screen: screen,
+}
 
-let update = (_state: state, action: action) => {
+type action =
+  | StartWorkout(Workout.t)
+  | PrevWorkout
+  | NextWorkout
+
+let update = (state: state, action: action) => {
   switch action {
-  | StartWorkout(workout) => ActiveExercise(workout)
+  | StartWorkout(workout) => {...state, screen: ActiveExercise(workout)}
+  | PrevWorkout =>
+    switch state.screen {
+    | PreWorkout => {...state, day: WeeklyPlan.prev(state.weeklyPlan, state.day)}
+    | _ => state
+    }
+  | NextWorkout =>
+    switch state.screen {
+    | PreWorkout => {...state, day: WeeklyPlan.next(state.weeklyPlan, state.day)}
+    | _ => state
+    }
   }
 }
 
 @react.component
-let make = (~day: WeeklyPlan.Day.t, ~workouts: array<Workout.t>, ~weeklyPlan: WeeklyPlan.t) => {
-  let workoutName = WeeklyPlan.get(weeklyPlan, day)
+let make = (~today: WeeklyPlan.Day.t, ~workouts: array<Workout.t>, ~weeklyPlan: WeeklyPlan.t) => {
+  let (state, send) = React.useReducer(
+    update,
+    {
+      day: today,
+      weeklyPlan,
+      screen: PreWorkout,
+    },
+  )
+
+  let workoutName = WeeklyPlan.get(weeklyPlan, state.day)
   let workout = Option.flatMap(workoutName, workoutName =>
     Array.find(workouts, w => w.name == workoutName)
   )
 
-  let (state, send) = React.useReducer(update, PreWorkout)
-
   <div className=styles.view ariaLive=#polite>
-    {switch workout {
-    | Some(workout) =>
-      <>
-        <div className=styles.today_header>
-          <h2> {React.string(`${day->WeeklyPlan.Day.toString}'s Workout`)} </h2>
-          <p className=styles.workout_info> {React.string(workout.name)} </p>
-        </div>
-        {switch state {
-        | PreWorkout =>
-          <div className=styles.pre_workout_view>
-            <button
-              className=styles.start_workout_button onClick={_ => send(StartWorkout(workout))}>
-              {React.string("Start Workout")}
-            </button>
-            <div className=styles.workout_preview>
-              <WorkoutSection workout />
-            </div>
-            <button
-              className=styles.start_workout_button onClick={_ => send(StartWorkout(workout))}>
-              {React.string("Start Workout")}
-            </button>
-          </div>
-
-        | ActiveExercise(workout) => <ActiveWorkout workout />
-        }}
-      </>
-
-    | None =>
-      <div className=styles.error_state>
-        <p> {React.string("No workout scheduled for today.")} </p>
+    {<>
+      <div className=styles.today_header>
+        <h2> {React.string(`${state.day->WeeklyPlan.Day.toString}'s Workout`)} </h2>
+        <p className=styles.workout_info> {React.string(workoutName->Option.getOr("Rest day"))} </p>
+        <button className=styles.select_prev_workout onClick={_ => send(PrevWorkout)}>
+          {React.string("Prev")}
+        </button>
+        <button className=styles.select_next_workout onClick={_ => send(NextWorkout)}>
+          {React.string("Next")}
+        </button>
       </div>
-    }}
+      {switch state.screen {
+      | PreWorkout =>
+        <div className=styles.pre_workout_view>
+          {switch workout {
+          | Some(workout) =>
+            <>
+              <button
+                className=styles.start_workout_button onClick={_ => send(StartWorkout(workout))}>
+                {React.string("Start Workout")}
+              </button>
+              <div className=styles.workout_preview>
+                <WorkoutSection workout />
+              </div>
+              <button
+                className=styles.start_workout_button onClick={_ => send(StartWorkout(workout))}>
+                {React.string("Start Workout")}
+              </button>
+            </>
+          | None =>
+            <div className=styles.error_state>
+              <p>
+                {React.string(`No workout scheduled for ${state.day->WeeklyPlan.Day.toString}.`)}
+              </p>
+            </div>
+          }}
+        </div>
+
+      | ActiveExercise(workout) => <ActiveWorkout workout />
+      }}
+    </>}
   </div>
 }

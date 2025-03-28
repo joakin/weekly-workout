@@ -44,6 +44,30 @@ module Day = {
     | None => panic(`Invalid day of the week ${dayOfWeek}`)
     }
   }
+
+  let next = (day: t) => {
+    switch day {
+    | Monday => Tuesday
+    | Tuesday => Wednesday
+    | Wednesday => Thursday
+    | Thursday => Friday
+    | Friday => Saturday
+    | Saturday => Sunday
+    | Sunday => Monday
+    }
+  }
+
+  let prev = (day: t) => {
+    switch day {
+    | Monday => Sunday
+    | Tuesday => Monday
+    | Wednesday => Tuesday
+    | Thursday => Wednesday
+    | Friday => Thursday
+    | Saturday => Friday
+    | Sunday => Saturday
+    }
+  }
 }
 
 type t = {
@@ -65,5 +89,23 @@ let get = (plan: t, day: Day.t) => {
   | Friday => plan.friday
   | Saturday => plan.saturday
   | Sunday => plan.sunday
+  }
+}
+
+let rec next = (plan: t, day: Day.t, ~skipRestDays: bool=false) => {
+  let nextDay = Day.next(day)
+  switch get(plan, nextDay) {
+  | Some(_) => nextDay
+  | None if skipRestDays => next(plan, nextDay)
+  | None => nextDay
+  }
+}
+
+let rec prev = (plan: t, day: Day.t, ~skipRestDays: bool=false) => {
+  let prevDay = Day.prev(day)
+  switch get(plan, prevDay) {
+  | Some(_) => prevDay
+  | None if skipRestDays => prev(plan, prevDay)
+  | None => prevDay
   }
 }
