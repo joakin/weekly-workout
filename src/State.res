@@ -5,22 +5,20 @@ type state =
 
 type msg =
   | Initialize
-  | WorkoutsLoaded(result<array<Workout.t>, unit>)
+  | WorkoutsLoaded(result<array<Workout.t>, string>)
 
 let initialState = Loading
 
 let update = (state: state, msg: msg, dispatch: msg => unit) => {
   switch msg {
   | Initialize =>
-    let _ =
-      Api.Workouts.get()
-      ->Promise.thenResolve(workouts => Ok(workouts))
-      ->Promise.catch(_ => Promise.resolve(Error()))
-      ->Promise.thenResolve(msg => dispatch(WorkoutsLoaded(msg)))
+    let _ = Api.Workouts.get()->Promise.thenResolve(result => dispatch(WorkoutsLoaded(result)))
 
     Loading
   | WorkoutsLoaded(Ok(workouts)) => Loaded(workouts)
-  | WorkoutsLoaded(Error()) => Failed
+  | WorkoutsLoaded(Error(msg)) =>
+    Console.error(msg)
+    Failed
   }
 }
 
