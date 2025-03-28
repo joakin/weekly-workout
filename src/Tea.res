@@ -42,7 +42,12 @@ let useState = (
 
   React.useSyncExternalStore(
     ~subscribe=_ => {
-      let update = state => setState(_ => select(state))
+      let update = state =>
+        setState(oldSelectedState => {
+          let newSelectedState = select(state)
+          // Shallow compare, return the old reference if they are the same
+          newSelectedState == oldSelectedState ? oldSelectedState : newSelectedState
+        })
       Program.subscribe(program, update)
       () => Program.unsubscribe(program, update)
     },
