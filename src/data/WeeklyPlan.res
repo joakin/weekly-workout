@@ -47,13 +47,13 @@ module Day = {
 }
 
 type t = {
-  monday: option<string>,
-  tuesday: option<string>,
-  wednesday: option<string>,
-  thursday: option<string>,
-  friday: option<string>,
-  saturday: option<string>,
-  sunday: option<string>,
+  monday?: string,
+  tuesday?: string,
+  wednesday?: string,
+  thursday?: string,
+  friday?: string,
+  saturday?: string,
+  sunday?: string,
 }
 
 let get = (plan: t, day: Day.t) => {

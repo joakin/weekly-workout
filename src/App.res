@@ -15,13 +15,11 @@ module Loaded = {
 
     let today = WeeklyPlan.Day.today()
     let weeklyPlan: WeeklyPlan.t = {
-      monday: Some("Push 1"),
-      tuesday: Some("Pull 1"),
-      wednesday: Some("Legs"),
-      thursday: Some("Push 2"),
-      friday: Some("Pull 2"),
-      saturday: None,
-      sunday: None,
+      monday: "Push 1",
+      tuesday: "Pull 1",
+      wednesday: "Legs",
+      thursday: "Push 2",
+      friday: "Pull 2",
     }
 
     let (menuActive, setMenuActive) = React.useState(_ => false)
