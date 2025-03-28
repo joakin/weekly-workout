@@ -17,7 +17,7 @@ module Loaded = {
     let weeklyPlan: WeeklyPlan.t = {
       monday: "Push 1",
       tuesday: "Pull 1",
-      wednesday: "Legs",
+      wednesday: "Legs 1",
       thursday: "Push 2",
       friday: "Pull 2",
     }

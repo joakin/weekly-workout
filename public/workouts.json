@@ -84,7 +84,7 @@
             ]
         },
         {
-            "name": "Legs",
+            "name": "Legs 1",
             "exercises": [
                 {
                     "name": "Barbell Squats",
@@ -107,24 +107,46 @@
                     "name": "DB Single Leg RDL's",
                     "sets": { "min": 2, "max": 3 },
                     "reps": { "min": 10, "max": 12 },
-                    "notes": "each leg",
-                    "superset": {
-                        "name": "Slick Floor Bridge Curls",
-                        "sets": { "min": 2, "max": 3 },
-                        "reps": { "min": 0 },
-                        "notes": "To failure"
-                    }
+                    "notes": "each leg"
                 },
                 {
                     "name": "Standing DB Calf Raises",
                     "sets": { "min": 3 },
+                    "reps": { "min": 15, "max": 20 }
+                }
+            ]
+        },
+        {
+            "name": "Legs 2",
+            "exercises": [
+                {
+                    "name": "Barbell Squats",
+                    "sets": { "min": 4 },
+                    "reps": { "min": 4, "max": 6 },
+                    "notes": "leave 1-2 reps in the tank - increase weight as able"
+                },
+                {
+                    "name": "Barbell Hip Thrusts",
+                    "sets": { "min": 3 },
+                    "reps": { "min": 8, "max": 10 }
+                },
+                {
+                    "name": "Barbell or DB Alternating Reverse Lunges",
+                    "sets": { "min": 2, "max": 3 },
+                    "reps": { "min": 10, "max": 12 },
+                    "notes": "each leg"
+                },
+                {
+                    "name": "Slick Floor Bridge Curls",
+                    "sets": { "min": 2, "max": 3 },
+                    "reps": { "min": 0 },
+                    "notes": "To failure"
+                },
+                {
+                    "name": "Seated DB Calf Raises",
+                    "sets": { "min": 3 },
                     "reps": { "min": 15, "max": 20 },
-                    "superset": {
-                        "name": "Seated DB Calf Raises",
-                        "sets": { "min": 3 },
-                        "reps": { "min": 15, "max": 20 },
-                        "notes": "perform one leg at a time if time allows"
-                    }
+                    "notes": "perform one leg at a time if time allows"
                 }
             ]
         },
@@ -216,4 +238,4 @@
             ]
         }
     ]
-} 
+}
