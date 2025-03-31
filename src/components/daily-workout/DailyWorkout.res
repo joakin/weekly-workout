@@ -25,6 +25,8 @@ type styles = {
   error_state: string,
   nav_button_prev: string,
   nav_button_next: string,
+  input_with_buttons: string,
+  quick_buttons: string,
 }
 @module external styles: styles = "./daily-workout.module.css"
 
@@ -68,6 +70,9 @@ module ActiveWorkout = {
     | PreviousExercise
     | WeightChanged(float)
     | RepsChanged(int)
+    | SetRepsToMin
+    | SetRepsToMax
+    | AdjustWeight(float)
 
   let update = (state: state, action: action) => {
     switch action {
@@ -122,6 +127,33 @@ module ActiveWorkout = {
         ...state,
         currentSet: {...state.currentSet, reps},
       }
+
+    | SetRepsToMin => {
+        ...state,
+        currentSet: {
+          ...state.currentSet,
+          reps: currentExercise(state).exercise.reps.min,
+        },
+      }
+
+    | SetRepsToMax => {
+        ...state,
+        currentSet: {
+          ...state.currentSet,
+          reps: switch currentExercise(state).exercise.reps.max {
+          | Some(max) => max
+          | None => state.currentSet.reps
+          },
+        },
+      }
+
+    | AdjustWeight(adjustment) => {
+        ...state,
+        currentSet: {
+          ...state.currentSet,
+          weight: state.currentSet.weight +. adjustment,
+        },
+      }
     }
   }
 
@@ -175,36 +207,81 @@ module ActiveWorkout = {
           }}>
           <div className=styles.form_group>
             <label htmlFor="reps-completed"> {React.string("Reps")} </label>
-            <input
-              type_="number"
-              id="reps-completed"
-              name="reps"
-              min="0"
-              required=true
-              placeholder="Number of reps"
-              value={state.currentSet.reps->Int.toString}
-              onInput={e =>
-                JsxEvent.Form.target(e)["value"]
-                ->Int.fromString
-                ->Option.forEach(i => send(RepsChanged(i)))}
-            />
+            <div className=styles.input_with_buttons>
+              <input
+                type_="number"
+                id="reps-completed"
+                name="reps"
+                min="0"
+                required=true
+                placeholder="Number of reps"
+                value={state.currentSet.reps->Int.toString}
+                onInput={e =>
+                  JsxEvent.Form.target(e)["value"]
+                  ->Int.fromString
+                  ->Option.forEach(i => send(RepsChanged(i)))}
+              />
+              <div className=styles.quick_buttons>
+                <Button type_=Button variant=Secondary onClick={_ => send(SetRepsToMin)}>
+                  {React.string("Min")}
+                </Button>
+                <Button type_=Button variant=Secondary onClick={_ => send(SetRepsToMax)}>
+                  {React.string("Max")}
+                </Button>
+              </div>
+            </div>
           </div>
           <div className=styles.form_group>
             <label htmlFor="weight-used"> {React.string("Weight (kg)")} </label>
-            <input
-              type_="number"
-              id="weight-used"
-              name="weight"
-              min="0"
-              step=0.5
-              required=true
-              placeholder="Weight (kg)"
-              value={state.currentSet.weight->Float.toFixed(~digits=1)}
-              onInput={e =>
-                JsxEvent.Form.target(e)["value"]
-                ->Float.fromString
-                ->Option.forEach(f => send(WeightChanged(f)))}
-            />
+            {
+              let adjust = [0.5, 1.0, 5.0, 10.0]
+              let toStr = weight => weight->Float.toFixed(~digits=weight == floor(weight) ? 0 : 1)
+
+              <div className=styles.input_with_buttons>
+                <input
+                  type_="number"
+                  id="weight-used"
+                  name="weight"
+                  min="0"
+                  step=0.5
+                  required=true
+                  placeholder="Weight (kg)"
+                  value={state.currentSet.weight->Float.toFixed(~digits=1)}
+                  onInput={e =>
+                    JsxEvent.Form.target(e)["value"]
+                    ->Float.fromString
+                    ->Option.forEach(f => send(WeightChanged(f)))}
+                />
+                <div className=styles.quick_buttons>
+                  {adjust
+                  ->Array.map(weight => {
+                    let str = "-" ++ weight->toStr
+                    <Button
+                      key={str}
+                      type_=Button
+                      variant=Secondary
+                      onClick={_ => send(AdjustWeight(-.weight))}>
+                      {React.string(str)}
+                    </Button>
+                  })
+                  ->React.array}
+                </div>
+                <div className=styles.quick_buttons>
+                  {adjust
+                  ->Array.map(weight => {
+                    let str = "+" ++ weight->toStr
+                    <Button
+                      key={str}
+                      type_=Button
+                      variant=Secondary
+                      onClick={_ => send(AdjustWeight(weight))}>
+                      {React.string(str)}
+                    </Button>
+                  })
+                  ->React.array}
+                </div>
+              </div>
+            }
           </div>
           <div className=styles.set_buttons>
             {switch state.currentSetStatus {

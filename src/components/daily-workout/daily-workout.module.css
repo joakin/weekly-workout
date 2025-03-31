@@ -176,6 +176,23 @@
     text-align: center;
 }
 
+.input_with_buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.input_with_buttons input {
+    flex: 1;
+    min-width: 50px;
+}
+
+.quick_buttons {
+    display: flex;
+    gap: 0.25rem;
+}
+
 @media (max-width: 640px) {
     .active_exercise_header {
         flex-direction: column;
