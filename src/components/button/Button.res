@@ -14,14 +14,20 @@ type variant =
   | Success
   | Normal
 
+type buttonType =
+  | Button
+  | Submit
+  | Reset
+
 @react.component
 let make = (
   ~children: React.element,
-  ~onClick: unit => unit,
+  ~onClick: option<JsxEvent.Mouse.t => unit>=?,
   ~variant: variant=Normal,
   ~disabled: bool=false,
   ~fullWidth: bool=false,
   ~className: option<string>=?,
+  ~type_: buttonType=Button,
 ) => {
   let className = {
     let base = styles.button
@@ -39,5 +45,11 @@ let make = (
     ->Array.join(" ")
   }
 
-  <button className={className} onClick={_ => onClick()} disabled> {children} </button>
+  let typeString = switch type_ {
+  | Button => "button"
+  | Submit => "submit"
+  | Reset => "reset"
+  }
+
+  <button className={className} ?onClick disabled type_=typeString> {children} </button>
 }

@@ -164,14 +164,22 @@ module ActiveWorkout = {
           | None => React.null
           }}
         </div>
-        <form className=styles.set_completion_form>
+        <form
+          className=styles.set_completion_form
+          onSubmit={e => {
+            JsxEvent.Form.preventDefault(e)
+            switch state.currentSetStatus {
+            | NotStarted => send(StartSet)
+            | InProgress => send(EndSet)
+            }
+          }}>
           <div className=styles.form_group>
             <label htmlFor="reps-completed"> {React.string("Reps")} </label>
             <input
               type_="number"
               id="reps-completed"
               name="reps"
-              min="1"
+              min="0"
               required=true
               placeholder="Number of reps"
               value={state.currentSet.reps->Int.toString}
@@ -201,11 +209,11 @@ module ActiveWorkout = {
           <div className=styles.set_buttons>
             {switch state.currentSetStatus {
             | NotStarted =>
-              <Button variant=Success fullWidth=true onClick={_ => send(StartSet)}>
+              <Button type_=Submit variant=Success fullWidth=true>
                 {React.string("Start Set")}
               </Button>
             | InProgress =>
-              <Button variant=Primary fullWidth=true onClick={_ => send(EndSet)}>
+              <Button type_=Submit variant=Primary fullWidth=true>
                 {React.string("Complete Set")}
               </Button>
             }}
