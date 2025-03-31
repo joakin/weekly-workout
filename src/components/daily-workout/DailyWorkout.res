@@ -312,11 +312,11 @@ let make = (~today: WeeklyPlan.Day.t, ~workouts: array<Workout.t>, ~weeklyPlan: 
         <p className=styles.workout_info> {React.string(workoutName->Option.getOr("Rest day"))} </p>
         <Button
           variant=Secondary className={styles.nav_button_prev} onClick={_ => send(PrevWorkout)}>
-          {React.string("Prev")}
+          {React.string("<")}
         </Button>
         <Button
           variant=Secondary className={styles.nav_button_next} onClick={_ => send(NextWorkout)}>
-          {React.string("Next")}
+          {React.string(">")}
         </Button>
       </div>
       {switch state.screen {
