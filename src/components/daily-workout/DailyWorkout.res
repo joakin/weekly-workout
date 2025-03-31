@@ -4,8 +4,6 @@ type styles = {
   workout_preview: string,
   start_workout_button: string,
   today_header: string,
-  select_prev_workout: string,
-  select_next_workout: string,
   workout_info: string,
   active_exercise: string,
   active_exercise_header: string,
@@ -21,12 +19,12 @@ type styles = {
   sets_title: string,
   sets_list: string,
   set_item: string,
-  start_set: string,
-  complete_set: string,
   exercise_controls: string,
   prev_exercise: string,
   next_exercise: string,
   error_state: string,
+  nav_button_prev: string,
+  nav_button_next: string,
 }
 @module external styles: styles = "./daily-workout.module.css"
 
@@ -201,22 +199,16 @@ module ActiveWorkout = {
             />
           </div>
           <div className=styles.set_buttons>
-            <button
-              type_="button"
-              id="start-set"
-              className=styles.start_set
-              disabled={state.currentSetStatus == InProgress}
-              onClick={_ => send(StartSet)}>
-              {React.string("Start Set")}
-            </button>
-            <button
-              type_="submit"
-              id="complete-set"
-              className=styles.complete_set
-              disabled={state.currentSetStatus == NotStarted}
-              onClick={_ => send(EndSet)}>
-              {React.string("Complete Set")}
-            </button>
+            {switch state.currentSetStatus {
+            | NotStarted =>
+              <Button variant=Success fullWidth=true onClick={_ => send(StartSet)}>
+                {React.string("Start Set")}
+              </Button>
+            | InProgress =>
+              <Button variant=Primary fullWidth=true onClick={_ => send(EndSet)}>
+                {React.string("Complete Set")}
+              </Button>
+            }}
           </div>
         </form>
         <div className=styles.completed_sets>
@@ -235,20 +227,18 @@ module ActiveWorkout = {
           </ul>
         </div>
         <div className=styles.exercise_controls>
-          <button
-            type_="button"
-            className=styles.prev_exercise
+          <Button
+            variant=Secondary
             disabled={state.currentExerciseIndex == 0}
             onClick={_ => send(PreviousExercise)}>
             {React.string("Previous Exercise")}
-          </button>
-          <button
-            type_="button"
-            className=styles.next_exercise
+          </Button>
+          <Button
+            variant=Secondary
             disabled={state.currentExerciseIndex == workout.exercises->Array.length - 1}
             onClick={_ => send(NextExercise)}>
             {React.string("Next Exercise")}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -312,12 +302,14 @@ let make = (~today: WeeklyPlan.Day.t, ~workouts: array<Workout.t>, ~weeklyPlan: 
       <div className=styles.today_header>
         <h2> {React.string(`${state.day->WeeklyPlan.Day.toString}'s Workout`)} </h2>
         <p className=styles.workout_info> {React.string(workoutName->Option.getOr("Rest day"))} </p>
-        <button className=styles.select_prev_workout onClick={_ => send(PrevWorkout)}>
+        <Button
+          variant=Secondary className={styles.nav_button_prev} onClick={_ => send(PrevWorkout)}>
           {React.string("Prev")}
-        </button>
-        <button className=styles.select_next_workout onClick={_ => send(NextWorkout)}>
+        </Button>
+        <Button
+          variant=Secondary className={styles.nav_button_next} onClick={_ => send(NextWorkout)}>
           {React.string("Next")}
-        </button>
+        </Button>
       </div>
       {switch state.screen {
       | PreWorkout =>
@@ -325,17 +317,15 @@ let make = (~today: WeeklyPlan.Day.t, ~workouts: array<Workout.t>, ~weeklyPlan: 
           {switch workout {
           | Some(workout) =>
             <>
-              <button
-                className=styles.start_workout_button onClick={_ => send(StartWorkout(workout))}>
+              <Button variant=Primary onClick={_ => send(StartWorkout(workout))}>
                 {React.string("Start Workout")}
-              </button>
+              </Button>
               <div className=styles.workout_preview>
                 <WorkoutSection workout />
               </div>
-              <button
-                className=styles.start_workout_button onClick={_ => send(StartWorkout(workout))}>
+              <Button variant=Primary onClick={_ => send(StartWorkout(workout))}>
                 {React.string("Start Workout")}
-              </button>
+              </Button>
             </>
           | None =>
             <div className=styles.error_state>
