@@ -134,7 +134,7 @@ module ActiveWorkout = {
         currentExerciseIndex: 0,
         currentSetStatus: NotStarted,
         currentSet: {startTime: 0.0, endTime: 0.0, weight: 0.0, reps: 0},
-      },
+      }->resetCurrentSet,
     )
     let currentExercise = state.workout.exercises[state.currentExerciseIndex]
 
