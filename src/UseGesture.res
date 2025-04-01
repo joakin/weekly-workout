@@ -3,43 +3,118 @@ module State = {
 }
 
 module Config = {
+  type vec2 = (float, float)
+
   module Target = {
     type t
     external node: Dom.node => t = "%identity"
     external ref: React.ref<React.element> => t = "%identity"
   }
 
+  /**
+   * React note: If you want events not to be passive, you will need to attach
+   * events directly to a node using target because of the way React handles
+   * events
+   */
   type eventOptions = {
     passive?: bool,
     capture?: bool,
   }
 
-  type shared = {
-    target?: Target.t,
-    eventOptions?: eventOptions,
-    window?: Dom.window,
+  type bounds = {top?: float, bottom?: float, left?: float, right?: float}
+
+  type scaleBounds = {min?: float, max?: float}
+  type angleBounds = {min?: float, max?: float}
+
+  type sharedAndGesture = {
     enabled?: bool,
+    eventOptions?: eventOptions,
   }
 
-  type drag = {}
+  type shared = {
+    target?: Target.t,
+    window?: Dom.window,
+  }
+
+  type gesture = {
+    ...sharedAndGesture,
+    from?: State.t => vec2,
+    threshold?: vec2,
+    preventDefault?: bool,
+    triggerAllEvents?: bool,
+    axis?: [#lock | #x | #y],
+    rubberband?: vec2,
+    transform?: vec2 => vec2,
+  }
+
+  type xy = {
+    axisThreshold?: float,
+    bounds?: State.t => bounds,
+  }
+
+  type dragAxisThreshold = {mouse: float, pen: float, touch: float}
+  type dragPointer = {
+    touch?: bool,
+    capture?: bool,
+    buttons?: array<float>,
+    lock?: bool,
+    keys?: bool,
+  }
+  type swipe = {
+    distance?: vec2,
+    duration?: float,
+    velocity?: vec2,
+  }
+  type drag = {
+    ...gesture,
+    axisThreshold?: dragAxisThreshold,
+    filterTaps?: bool,
+    tapsThreshold?: float,
+    preventScroll?: bool,
+    preventScrollAxis?: [#x | #y | #xy],
+    pointer: dragPointer,
+    delay?: float,
+    swipe?: swipe,
+    keyboardDisplacement?: float,
+  }
   type useDrag = {...shared, ...drag}
 
-  type move = {}
+  type move = {
+    ...gesture,
+    ...xy,
+    mouseOnly?: bool,
+  }
   type useMove = {...shared, ...move}
 
-  type hover = {}
+  type hover = {...gesture, mouseOnly?: bool}
   type useHover = {...shared, ...hover}
 
-  type scroll = {}
+  type scroll = {
+    ...gesture,
+    ...xy,
+  }
   type useScroll = {...shared, ...scroll}
 
-  type wheel = {}
+  type wheel = {
+    ...gesture,
+    ...xy,
+  }
+
   type useWheel = {...shared, ...wheel}
 
-  type pinch = {}
+  type pinchPointer = {touch?: bool}
+  type pinch = {
+    ...gesture,
+    scaleBounds?: State.t => scaleBounds,
+    angleBounds?: State.t => angleBounds,
+    pinchOnWheel?: bool,
+    modifierKey?: Nullable.t<array<[#altKey | #ctrlKey | #metaKey]>>,
+    pointer: pinchPointer,
+  }
   type usePinch = {...shared, ...pinch}
 
   type useGesture = {
+    ...sharedAndGesture,
     ...shared,
     drag?: drag,
     move?: move,
@@ -88,3 +163,8 @@ module React = {
   external useGesture: (useGestureCallbacks, Config.useGesture) => 'args => ReactDOM.domProps =
     "useHover"
 }
+
+let preventGestures = %raw(`() => {
+  document.addEventListener('gesturestart', (e) => e.preventDefault())
+  document.addEventListener('gesturechange', (e) => e.preventDefault())
+}`)
