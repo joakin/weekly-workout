@@ -193,6 +193,28 @@
     gap: 0.25rem;
 }
 
+.finished_workout_view {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.finished_workout_view h2 {
+    font-size: var(--font-size-2xl);
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.finished_workout_view p {
+    font-size: var(--font-size-lg);
+    color: var(--text-color);
+    margin: 0;
+}
+
 @media (max-width: 640px) {
     .active_exercise_header {
         flex-direction: column;

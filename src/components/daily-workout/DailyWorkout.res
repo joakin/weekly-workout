@@ -1,6 +1,7 @@
 type styles = {
   view: string,
   pre_workout_view: string,
+  finished_workout_view: string,
   workout_preview: string,
   start_workout_button: string,
   today_header: string,
@@ -158,17 +159,19 @@ module ActiveWorkout = {
   }
 
   @react.component
-  let make = (~workout: Workout.t) => {
+  let make = (~workout: Workout.t, ~onComplete: PerformedWorkout.t => unit) => {
     let (state, send) = React.useReducer(
       update,
       {
-        workout: PerformedWorkout.make(workout),
+        workout: PerformedWorkout.make(workout)->PerformedWorkout.start,
         currentExerciseIndex: 0,
         currentSetStatus: NotStarted,
         currentSet: {startTime: 0.0, endTime: 0.0, weight: 0.0, reps: 0},
       }->resetCurrentSet,
     )
     let currentExercise = state.workout.exercises[state.currentExerciseIndex]
+
+    let isLastExercise = state.currentExerciseIndex == workout.exercises->Array.length - 1
 
     switch currentExercise {
     | Some(exercise) =>
@@ -318,12 +321,16 @@ module ActiveWorkout = {
             onClick={_ => send(PreviousExercise)}>
             {React.string("Previous Exercise")}
           </Button>
-          <Button
-            variant=Secondary
-            disabled={state.currentExerciseIndex == workout.exercises->Array.length - 1}
-            onClick={_ => send(NextExercise)}>
-            {React.string("Next Exercise")}
-          </Button>
+          {if isLastExercise {
+            <Button
+              variant={Success} onClick={_ => onComplete(state.workout->PerformedWorkout.end)}>
+              {React.string("Finished! 💪 🎉")}
+            </Button>
+          } else {
+            <Button variant=Secondary onClick={_ => send(NextExercise)}>
+              {React.string("Next Exercise")}
+            </Button>
+          }}
         </div>
       </div>
 
@@ -338,6 +345,7 @@ module ActiveWorkout = {
 type screen =
   | PreWorkout
   | ActiveExercise(Workout.t)
+  | FinishedWorkout(PerformedWorkout.t)
 
 type state = {
   day: WeeklyPlan.Day.t,
@@ -349,6 +357,7 @@ type action =
   | StartWorkout(Workout.t)
   | PrevWorkout
   | NextWorkout
+  | EndWorkout(PerformedWorkout.t)
 
 let update = (state: state, action: action) => {
   switch action {
@@ -361,6 +370,11 @@ let update = (state: state, action: action) => {
   | NextWorkout =>
     switch state.screen {
     | PreWorkout => {...state, day: WeeklyPlan.next(state.weeklyPlan, state.day)}
+    | _ => state
+    }
+  | EndWorkout(workout) =>
+    switch state.screen {
+    | ActiveExercise(_) => {...state, screen: FinishedWorkout(workout)}
     | _ => state
     }
   }
@@ -427,7 +441,21 @@ let make = (~today: WeeklyPlan.Day.t, ~workouts: array<Workout.t>, ~weeklyPlan: 
           }}
         </div>
 
-      | ActiveExercise(workout) => <ActiveWorkout workout />
+      | ActiveExercise(workout) =>
+        <ActiveWorkout workout onComplete={workout => send(EndWorkout(workout))} />
+
+      | FinishedWorkout(workout) =>
+        <div className=styles.finished_workout_view>
+          <h2> {React.string("Finished!! 🎉 💪")} </h2>
+          <p>
+            {React.string("You completed ")}
+            <strong> {React.string(workout.workout.name)} </strong>
+            {React.string(" in ")}
+            <strong>
+              {Duration.formatMillis(workout.endTime -. workout.startTime)->React.string}
+            </strong>
+          </p>
+        </div>
       }}
     </>}
   </div>

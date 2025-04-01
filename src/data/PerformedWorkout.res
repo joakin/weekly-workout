@@ -27,6 +27,16 @@ let make = (workout: Workout.t) => {
   }),
 }
 
+let start = (workout: t) => {
+  ...workout,
+  startTime: Date.now(),
+}
+
+let end = (workout: t) => {
+  ...workout,
+  endTime: Date.now(),
+}
+
 /**
  * Complete the set for the exercise at the given index.
  */
