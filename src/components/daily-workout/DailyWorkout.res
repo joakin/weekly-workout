@@ -387,14 +387,20 @@ let make = (~today: WeeklyPlan.Day.t, ~workouts: array<Workout.t>, ~weeklyPlan: 
       <div className=styles.today_header>
         <h2> {React.string(`${state.day->WeeklyPlan.Day.toString}'s Workout`)} </h2>
         <p className=styles.workout_info> {React.string(workoutName->Option.getOr("Rest day"))} </p>
-        <Button
-          variant=Secondary className={styles.nav_button_prev} onClick={_ => send(PrevWorkout)}>
-          {React.string("<")}
-        </Button>
-        <Button
-          variant=Secondary className={styles.nav_button_next} onClick={_ => send(NextWorkout)}>
-          {React.string(">")}
-        </Button>
+        {switch state.screen {
+        | PreWorkout =>
+          <>
+            <Button
+              variant=Secondary className={styles.nav_button_prev} onClick={_ => send(PrevWorkout)}>
+              {React.string("<")}
+            </Button>
+            <Button
+              variant=Secondary className={styles.nav_button_next} onClick={_ => send(NextWorkout)}>
+              {React.string(">")}
+            </Button>
+          </>
+        | _ => React.null
+        }}
       </div>
       {switch state.screen {
       | PreWorkout =>
