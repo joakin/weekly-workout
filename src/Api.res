@@ -3,7 +3,7 @@ module Workouts = {
     open Fetch
     try {
       let response = await fetch(
-        "/workouts.json",
+        "./workouts.json",
         {
           method: #GET,
           headers: Headers.fromObject({
