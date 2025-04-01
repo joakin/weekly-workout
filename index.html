@@ -14,36 +14,6 @@
 
 <body>
     <div id="root"></div>
-    <header>
-        <h1>Weekly Workout</h1>
-        <nav aria-label="Main navigation">
-            <button id="menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">
-                <span class="menu-icon"></span>
-            </button>
-            <ul id="nav-menu" role="menubar">
-                <li role="none">
-                    <a href="#/weekly-plan" class="nav-link" role="menuitem">Weekly Plan</a>
-                </li>
-                <li role="none">
-                    <a href="#/workouts" class="nav-link" role="menuitem">Workouts</a>
-                </li>
-                <li role="none">
-                    <a href="#/exercise" class="nav-link" role="menuitem">Exercise</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <div id="exercise" class="view" aria-live="polite"></div>
-
-        <div id="workouts" class="view" aria-live="polite"></div>
-
-        <div id="weekly-plan" class="view">
-            <div class="weekly-plan" data-default-display="grid"></div>
-            <div id="day-workout" class="hidden"></div>
-        </div>
-    </main>
     <script type="module" src="index.js"></script>
 </body>
 
