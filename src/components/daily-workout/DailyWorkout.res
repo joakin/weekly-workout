@@ -71,8 +71,7 @@ module ActiveWorkout = {
     | PreviousExercise
     | WeightChanged(float)
     | RepsChanged(int)
-    | SetRepsToMin
-    | SetRepsToMax
+    | SetReps(int)
     | AdjustWeight(float)
 
   let update = (state: state, action: action) => {
@@ -129,22 +128,11 @@ module ActiveWorkout = {
         currentSet: {...state.currentSet, reps},
       }
 
-    | SetRepsToMin => {
+    | SetReps(reps) => {
         ...state,
         currentSet: {
           ...state.currentSet,
-          reps: currentExercise(state).exercise.reps.min,
-        },
-      }
-
-    | SetRepsToMax => {
-        ...state,
-        currentSet: {
-          ...state.currentSet,
-          reps: switch currentExercise(state).exercise.reps.max {
-          | Some(max) => max
-          | None => state.currentSet.reps
-          },
+          reps,
         },
       }
 
@@ -169,11 +157,11 @@ module ActiveWorkout = {
         currentSet: {startTime: 0.0, endTime: 0.0, weight: 0.0, reps: 0},
       }->resetCurrentSet,
     )
-    let currentExercise = state.workout.exercises[state.currentExerciseIndex]
+    let exercise = state.workout.exercises[state.currentExerciseIndex]
 
     let isLastExercise = state.currentExerciseIndex == workout.exercises->Array.length - 1
 
-    switch currentExercise {
+    switch exercise {
     | Some(exercise) =>
       let sets = NumberRange.formatRange(exercise.exercise.sets)
       let reps = NumberRange.formatRange(exercise.exercise.reps)
@@ -225,12 +213,29 @@ module ActiveWorkout = {
                   ->Option.forEach(i => send(RepsChanged(i)))}
               />
               <div className=styles.quick_buttons>
-                <Button type_=Button variant=Secondary onClick={_ => send(SetRepsToMin)}>
+                <Button
+                  type_=Button
+                  variant=Secondary
+                  onClick={_ => send(SetReps(state.currentSet.reps - 1))}>
+                  {React.string("-")}
+                </Button>
+                <Button
+                  type_=Button
+                  variant=Secondary
+                  onClick={_ => send(SetReps(state.currentSet.reps + 1))}>
+                  {React.string("+")}
+                </Button>
+                <Button
+                  type_=Button
+                  variant=Secondary
+                  onClick={_ => send(SetReps((state->currentExercise).exercise.reps.min))}>
                   {React.string("Min")}
                 </Button>
-                <Button type_=Button variant=Secondary onClick={_ => send(SetRepsToMax)}>
-                  {React.string("Max")}
-                </Button>
+                {(state->currentExercise).exercise.reps.max->Option.mapOr(React.null, max =>
+                  <Button type_=Button variant=Secondary onClick={_ => send(SetReps(max))}>
+                    {React.string("Max")}
+                  </Button>
+                )}
               </div>
             </div>
           </div>
