@@ -9,11 +9,10 @@ type msg =
 
 let initialState = Loading
 
-let update = (state: state, msg: msg, dispatch: msg => unit) => {
+let update = (_state: state, msg: msg, dispatch: msg => unit) => {
   switch msg {
   | Initialize =>
     let _ = Api.Workouts.get()->Promise.thenResolve(result => dispatch(WorkoutsLoaded(result)))
-
     Loading
   | WorkoutsLoaded(Ok(workouts)) => Loaded(workouts)
   | WorkoutsLoaded(Error(msg)) =>
