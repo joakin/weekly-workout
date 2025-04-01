@@ -6,7 +6,7 @@ const watch = process.argv.includes("--watch") || process.argv.includes("-w");
 
 /** @type {import("esbuild").BuildOptions} */
 const commonConfig = {
-    entryPoints: ["src/index.js"],
+    entryPoints: ["src/index.js", "src/use-gesture.js"],
     bundle: true,
     outdir: "public/",
     jsx: "automatic",
