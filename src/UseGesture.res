@@ -304,6 +304,26 @@ module React = {
     useGestureCallbacks<'memo, 'args>,
     Config.useGesture<'memo, 'args>,
   ) => 'args => ReactDOM.domProps = "useHover"
+
+  // HELPERS
+  let touchAction = (
+    styles: ReactDOM.Style.t,
+    value: [
+      | #none
+      | #auto
+      | #none
+      | #"pan-x"
+      | #"pan-left"
+      | #"pan-right"
+      | #"pan-y"
+      | #"pan-up"
+      | #"pan-down"
+      | #"pinch-zoom"
+      | #manipulation
+    ],
+  ) => {
+    ReactDOM.Style.unsafeAddStyle(styles, {"touchAction": value})
+  }
 }
 
 let preventGestures = %raw(`() => {
