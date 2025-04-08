@@ -153,9 +153,9 @@ module Config = {
     window?: Dom.window,
   }
 
-  type gesture = {
+  type gesture<'memo, 'args> = {
     ...sharedAndGesture,
-    from?: State.t => vec2,
+    from?: State.t<'memo, 'args> => vec2,
     threshold?: vec2,
     preventDefault?: bool,
     triggerAllEvents?: bool,
@@ -164,9 +164,9 @@ module Config = {
     transform?: vec2 => vec2,
   }
 
-  type xy = {
+  type xy<'memo, 'args> = {
     axisThreshold?: float,
-    bounds?: State.t => bounds,
+    bounds?: State.t<'memo, 'args> => bounds,
   }
 
   type dragAxisThreshold = {mouse: float, pen: float, touch: float}
@@ -182,103 +182,128 @@ module Config = {
     duration?: float,
     velocity?: vec2,
   }
-  type drag = {
-    ...gesture,
+  type drag<'memo, 'args> = {
+    ...gesture<'memo, 'args>,
     axisThreshold?: dragAxisThreshold,
     filterTaps?: bool,
     tapsThreshold?: float,
     preventScroll?: bool,
     preventScrollAxis?: [#x | #y | #xy],
-    pointer: dragPointer,
+    pointer?: dragPointer,
     delay?: float,
     swipe?: swipe,
     keyboardDisplacement?: float,
   }
-  type useDrag = {...shared, ...drag}
+  type useDrag<'memo, 'args> = {...shared, ...drag<'memo, 'args>}
 
-  type move = {
-    ...gesture,
-    ...xy,
+  type move<'memo, 'args> = {
+    ...gesture<'memo, 'args>,
+    ...xy<'memo, 'args>,
     mouseOnly?: bool,
   }
-  type useMove = {...shared, ...move}
+  type useMove<'memo, 'args> = {...shared, ...move<'memo, 'args>}
 
-  type hover = {...gesture, mouseOnly?: bool}
-  type useHover = {...shared, ...hover}
+  type hover<'memo, 'args> = {...gesture<'memo, 'args>, mouseOnly?: bool}
+  type useHover<'memo, 'args> = {...shared, ...hover<'memo, 'args>}
 
-  type scroll = {
-    ...gesture,
-    ...xy,
+  type scroll<'memo, 'args> = {
+    ...gesture<'memo, 'args>,
+    ...xy<'memo, 'args>,
   }
-  type useScroll = {...shared, ...scroll}
+  type useScroll<'memo, 'args> = {...shared, ...scroll<'memo, 'args>}
 
-  type wheel = {
-    ...gesture,
-    ...xy,
+  type wheel<'memo, 'args> = {
+    ...gesture<'memo, 'args>,
+    ...xy<'memo, 'args>,
   }
 
-  type useWheel = {...shared, ...wheel}
+  type useWheel<'memo, 'args> = {...shared, ...wheel<'memo, 'args>}
 
   type pinchPointer = {touch?: bool}
-  type pinch = {
-    ...gesture,
-    scaleBounds?: State.t => scaleBounds,
-    angleBounds?: State.t => angleBounds,
+  type pinch<'memo, 'args> = {
+    ...gesture<'memo, 'args>,
+    scaleBounds?: State.t<'memo, 'args> => scaleBounds,
+    angleBounds?: State.t<'memo, 'args> => angleBounds,
     pinchOnWheel?: bool,
     modifierKey?: Nullable.t<array<[#altKey | #ctrlKey | #metaKey]>>,
     pointer: pinchPointer,
   }
-  type usePinch = {...shared, ...pinch}
+  type usePinch<'memo, 'args> = {...shared, ...pinch<'memo, 'args>}
 
-  type useGesture = {
+  type useGesture<'memo, 'args> = {
     ...sharedAndGesture,
     ...shared,
-    drag?: drag,
-    move?: move,
-    hover?: hover,
-    scroll?: scroll,
-    wheel?: wheel,
-    pinch?: pinch,
+    drag?: drag<'memo, 'args>,
+    move?: move<'memo, 'args>,
+    hover?: hover<'memo, 'args>,
+    scroll?: scroll<'memo, 'args>,
+    wheel?: wheel<'memo, 'args>,
+    pinch?: pinch<'memo, 'args>,
   }
 }
 
-@module("@use-gesture/react")
 module React = {
-  external useDrag: (State.t => unit, Config.useDrag) => 'args => ReactDOM.domProps = "useDrag"
+  @module("@use-gesture/react")
+  external useDrag: (
+    State.t<'memo, 'args> => unit,
+    Config.useDrag<'memo, 'args>,
+  ) => 'args => ReactDOM.domProps = "useDrag"
 
-  external useMove: (State.t => unit, Config.useMove) => 'args => ReactDOM.domProps = "useMove"
+  @module("@use-gesture/react")
+  external useMove: (
+    State.t<'memo, 'args> => unit,
+    Config.useMove<'memo, 'args>,
+  ) => 'args => ReactDOM.domProps = "useMove"
 
-  external useHover: (State.t => unit, Config.useHover) => 'args => ReactDOM.domProps = "useHover"
+  @module("@use-gesture/react")
+  external useHover: (
+    State.t<'memo, 'args> => unit,
+    Config.useHover<'memo, 'args>,
+  ) => 'args => ReactDOM.domProps = "useHover"
 
-  external useScroll: (State.t => unit, Config.useScroll) => 'args => ReactDOM.domProps =
-    "useScroll"
+  @module("@use-gesture/react")
+  external useScroll: (
+    State.t<'memo, 'args> => unit,
+    Config.useScroll<'memo, 'args>,
+  ) => 'args => ReactDOM.domProps = "useScroll"
 
-  external useWheel: (State.t => unit, Config.useWheel) => 'args => ReactDOM.domProps = "useWheel"
+  @module("@use-gesture/react")
+  external useWheel: (
+    State.t<'memo, 'args> => unit,
+    Config.useWheel<'memo, 'args>,
+  ) => 'args => ReactDOM.domProps = "useWheel"
 
-  external usePinch: (State.t => unit, Config.usePinch) => 'args => ReactDOM.domProps = "usePinch"
+  @module("@use-gesture/react")
+  external usePinch: (
+    State.t<'memo, 'args> => unit,
+    Config.usePinch<'memo, 'args>,
+  ) => 'args => ReactDOM.domProps = "usePinch"
 
-  // TODO: Missing native dom handlers which this shit enriches, see
+  // TODO: Missing native dom handlers which this stuff enriches, see
   // https://use-gesture.netlify.app/docs/gestures/#native-event-handlers-in-react
-  type useGestureCallbacks = {
-    onDrag?: State.t => unit,
-    onDragStart?: State.t => unit,
-    onDragEnd?: State.t => unit,
-    onPinch?: State.t => unit,
-    onPinchStart?: State.t => unit,
-    onPinchEnd?: State.t => unit,
-    onScroll?: State.t => unit,
-    onScrollStart?: State.t => unit,
-    onScrollEnd?: State.t => unit,
-    onMove?: State.t => unit,
-    onMoveStart?: State.t => unit,
-    onMoveEnd?: State.t => unit,
-    onWheel?: State.t => unit,
-    onWheelStart?: State.t => unit,
-    onWheelEnd?: State.t => unit,
-    onHover?: State.t => unit,
+  type useGestureCallbacks<'memo, 'args> = {
+    onDrag?: State.t<'memo, 'args> => unit,
+    onDragStart?: State.t<'memo, 'args> => unit,
+    onDragEnd?: State.t<'memo, 'args> => unit,
+    onPinch?: State.t<'memo, 'args> => unit,
+    onPinchStart?: State.t<'memo, 'args> => unit,
+    onPinchEnd?: State.t<'memo, 'args> => unit,
+    onScroll?: State.t<'memo, 'args> => unit,
+    onScrollStart?: State.t<'memo, 'args> => unit,
+    onScrollEnd?: State.t<'memo, 'args> => unit,
+    onMove?: State.t<'memo, 'args> => unit,
+    onMoveStart?: State.t<'memo, 'args> => unit,
+    onMoveEnd?: State.t<'memo, 'args> => unit,
+    onWheel?: State.t<'memo, 'args> => unit,
+    onWheelStart?: State.t<'memo, 'args> => unit,
+    onWheelEnd?: State.t<'memo, 'args> => unit,
+    onHover?: State.t<'memo, 'args> => unit,
   }
-  external useGesture: (useGestureCallbacks, Config.useGesture) => 'args => ReactDOM.domProps =
-    "useHover"
+  @module("@use-gesture/react")
+  external useGesture: (
+    useGestureCallbacks<'memo, 'args>,
+    Config.useGesture<'memo, 'args>,
+  ) => 'args => ReactDOM.domProps = "useHover"
 }
 
 let preventGestures = %raw(`() => {
