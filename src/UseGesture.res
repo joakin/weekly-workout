@@ -1,10 +1,127 @@
+type vec2 = (float, float)
+
+/**
+ * ReScript bindings for the state object provided by @use-gesture.
+ * See: [https://use-gesture.netlify.app/docs/state/](https://use-gesture.netlify.app/docs/state/)
+ */
 module State = {
-  type t = {}
+  /**
+   * Base state type containing properties common to most gestures.
+   * The `'memo` type parameter allows for a generic memo value.
+   */
+  type t<'memo, 'args> = {
+    // --- Internal properties (prefixed with _) ---
+    _active: bool,
+    _blocked: bool,
+    _intentional: bool,
+    _movement: vec2,
+    _initial: vec2,
+    _lastEventType: option<string>,
+    // Using array<int> for simplicity, could be a Set binding if needed.
+    _pointerIds: array<int>,
+    _touches: int,
+    _force: bool, // If pointer events supports force.
+    // --- Public properties ---
+    /** The originating DOM event. */
+    event: Dom.event,
+    /** The DOM node target. */
+    target: Js.Nullable.t<Dom.eventTarget>,
+    /** The DOM node currentTarget. */
+    currentTarget: Js.Nullable.t<Dom.eventTarget>,
+    /** Args optionally passed to the handler. */
+    args: 'args,
+    /** Unique pointer identifier. */
+    pointerId: option<int>,
+    /** Is the gesture active. */
+    active: bool,
+    /** Is it the first event of the gesture. */
+    first: bool,
+    /** Is it the last event of the gesture. */
+    last: bool,
+    /** Memoized value you can assign. */
+    memo: Nullable.t<'memo>,
+    /** Function to cancel the gesture. */
+    cancel: unit => unit,
+    /** Was the gesture canceled. */
+    canceled: bool,
+    /** Gesture start time (ms). */
+    startTime: float,
+    /** Event timestamp (ms). */
+    timeStamp: float,
+    /** Time elapsed since gesture start (ms). */
+    elapsedTime: float,
+    /** Whether the gesture is intentional. */
+    intentional: bool,
+    /** Current gesture values (e.g., [x, y] for drag, [d, a] for pinch). */
+    values: vec2,
+    /** Current gesture velocities. */
+    velocities: vec2,
+    /** Overall velocity. */
+    velocity: float,
+    /** Displacement since the first event. */
+    movement: vec2,
+    /** Displacement since the gesture started. */
+    offset: vec2,
+    /** Delta between the previous and current event. */
+    delta: vec2,
+    /** Direction per axis. */
+    direction: vec2,
+    /** Distance traversed since the first event. */
+    distance: float,
+    /** Coordinates of the first event. */
+    initial: vec2,
+    /** Coordinates of the previous event. */
+    previous: vec2,
+    /** Current coordinates. */
+    xy: vec2,
+    /** Current velocities per axis. */
+    vxvy: vec2,
+    /** Swipe gesture detected. */
+    swipe: vec2,
+    /** Number of touches involved. */
+    touches: int,
+    /** Alias for active. */
+    pinching: bool, // Present in pinch state, alias for active
+    /** Alias for active. */
+    dragging: bool, // Present in drag state, alias for active
+    /** Alias for active. */
+    moving: bool, // Present in move state, alias for active
+    /** Alias for active. */
+    scrolling: bool, // Present in scroll state, alias for active
+    /** Alias for active. */
+    wheeling: bool, // Present in wheel state, alias for active
+  }
+
+  /**
+   * State type specific to drag gestures. Includes all base properties
+   * plus drag-specific ones.
+   */
+  type drag<'memo, 'args> = {
+    ...t<'memo, 'args>,
+    // --- Drag specific ---
+    /** Is the mouse button down or touch held. */
+    down: bool,
+    /** Mouse buttons pressed. */
+    buttons: int,
+    /** Whether the drag is locked to the x / y axis. */
+    locked: bool,
+  }
+
+  /**
+   * State type specific to pinch gestures. Includes all base properties
+   * plus pinch-specific ones. Note: `da` (distance, angle) is an alias
+   * for `values`, and `vdva` is an alias for `velocities`, so they are
+   * accessed via `values` and `velocities` respectively.
+   */
+  type pinch<'memo, 'args> = {
+    ...t<'memo, 'args>,
+    // --- Pinch specific ---
+    /** The origin of the pinch gesture on the screen. */
+    origin: option<vec2>,
+  }
 }
 
 module Config = {
-  type vec2 = (float, float)
-
   module Target = {
     type t
     external node: Dom.node => t = "%identity"
