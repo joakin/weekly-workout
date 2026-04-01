@@ -38,20 +38,25 @@ let useState = (
   select: 'state => 'selectedState,
 ) => {
   let program = React.useContext(context)
-  let (selectedState, setState) = React.useState(_ => select(program.state))
+  let selectedStateCache: React.ref<option<'selectedState>> = React.useRef(None)
 
   React.useSyncExternalStore(
-    ~subscribe=_ => {
-      let update = state =>
-        setState(oldSelectedState => {
-          let newSelectedState = select(state)
-          // Shallow compare, return the old reference if they are the same
-          newSelectedState == oldSelectedState ? oldSelectedState : newSelectedState
-        })
-      Program.subscribe(program, update)
-      () => Program.unsubscribe(program, update)
+    ~subscribe=onStoreChange => {
+      let notify = _ => onStoreChange()
+      Program.subscribe(program, notify)
+      () => Program.unsubscribe(program, notify)
     },
-    ~getSnapshot=() => selectedState,
+    ~getSnapshot=() => {
+      let selectedState = select(program.state)
+
+      switch selectedStateCache.current {
+      | Some(previousSelectedState) if previousSelectedState == selectedState =>
+        previousSelectedState
+      | _ =>
+        selectedStateCache.current = Some(selectedState)
+        selectedState
+      }
+    },
   )
 }
 
